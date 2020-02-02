@@ -8,6 +8,7 @@ import edu.csus.ecs.pc2.core.model.InternalContest;
 import edu.csus.ecs.pc2.core.security.FileSecurityException;
 
 import java.io.File;
+import java.io.IOException;
 
 public class ContestInstance {
     private InternalController controller;
@@ -45,7 +46,19 @@ public class ContestInstance {
             System.exit(4);
         } catch (Exception e){
             e.printStackTrace();
-            System.exit(0);
+            System.exit(4);
+        }
+    }
+
+    public void saveContest(){
+        try {
+            contest.storeConfiguration(mainLog);
+        }catch (IOException e){
+            System.out.println("File pathing issues!");
+            System.exit(4);
+        }catch (Exception e){
+            e.printStackTrace();
+            System.exit(4);
         }
     }
 }

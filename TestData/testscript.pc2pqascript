@@ -2,3 +2,4 @@ load /Users/hunterhan/Desktop/PC2PQA_WithCustomScripts/pc2-9.6.0/bin chscompsci
 add account TEAM
 add problem PPOH TestData/problem.in TestData/problem.out
 save
+exit

@@ -10,7 +10,10 @@ public class Tests {
         contest.startDataViewing();
         DefaultProblem problem = new DefaultProblem("ABC", new File("TestData/problem.in"), new File("TestData/problem.out"));
         contest.test();
+        contest.setDefaultNumberOfAccounts();
+        contest.setDefaultContestTime();
         contest.addProblem(problem);
+        contest.setDefaultScoring();
         contest.saveContest();
         System.exit(0);
     }

@@ -1,7 +1,9 @@
 package com.lingfeishengtian.utils;
 
+import com.lingfeishengtian.core.LanguageManager;
+import edu.csus.ecs.pc2.core.InternalController;
+import edu.csus.ecs.pc2.core.model.InternalContest;
 import edu.csus.ecs.pc2.core.model.Profile;
-import edu.csus.ecs.pc2.core.util.QuickLoad;
 import edu.csus.ecs.pc2.profile.ProfileLoadException;
 import edu.csus.ecs.pc2.profile.ProfileManager;
 
@@ -12,7 +14,7 @@ public class ProfileUtils {
     private ProfileManager manager;
     private Profile currentProfile;
 
-    public ProfileUtils(String binPath, boolean shouldSearchForProfileProp, String profilePasscode){
+    public ProfileUtils(String binPath, boolean shouldSearchForProfileProp, String profilePasscode, InternalController controller, InternalContest contest){
         manager = new ProfileManager();
         File profilesPropertiesFile = new File(binPath + File.separator + "profiles.properties");
         if(profilesPropertiesFile.exists() && shouldSearchForProfileProp){
@@ -44,6 +46,9 @@ public class ProfileUtils {
             }catch (Exception e){
                 e.printStackTrace();
             }
+
+            LanguageManager manager = new LanguageManager(contest, controller);
+            manager.loadDefaultLanguages();
         }
     }
 

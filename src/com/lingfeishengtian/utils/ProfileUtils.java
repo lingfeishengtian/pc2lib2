@@ -1,6 +1,7 @@
 package com.lingfeishengtian.utils;
 
 import edu.csus.ecs.pc2.core.model.Profile;
+import edu.csus.ecs.pc2.core.util.QuickLoad;
 import edu.csus.ecs.pc2.profile.ProfileLoadException;
 import edu.csus.ecs.pc2.profile.ProfileManager;
 
@@ -17,7 +18,8 @@ public class ProfileUtils {
         if(profilesPropertiesFile.exists() && shouldSearchForProfileProp){
             try {
                 currentProfile = manager.getDefaultProfile(profilesPropertiesFile.getAbsolutePath());
-                currentProfile.setProfilePath(binPath + File.separator + currentProfile.getProfilePath());
+                if(currentProfile.getProfilePath().startsWith("profiles/"))
+                    currentProfile.setProfilePath(binPath + File.separator + currentProfile.getProfilePath());
             }catch (IOException e){
                 System.out.println("Something's wrong with your profile path.");
                 System.exit(4);

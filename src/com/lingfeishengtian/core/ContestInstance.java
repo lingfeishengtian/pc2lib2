@@ -4,7 +4,10 @@ import com.lingfeishengtian.utils.ProfileUtils;
 import edu.csus.ecs.pc2.core.InternalController;
 import edu.csus.ecs.pc2.core.log.Log;
 import edu.csus.ecs.pc2.core.log.StaticLog;
+import edu.csus.ecs.pc2.core.model.ClientType;
 import edu.csus.ecs.pc2.core.model.InternalContest;
+import edu.csus.ecs.pc2.core.model.Language;
+import edu.csus.ecs.pc2.core.model.LanguageAutoFill;
 import edu.csus.ecs.pc2.core.security.FileSecurityException;
 
 import java.io.File;
@@ -37,6 +40,11 @@ public class ContestInstance {
 
         contest.setProfile(profileUtils.getCurrentProfile());
         controller.setTheProfile(profileUtils.getCurrentProfile());
+
+        controller.setContactingRemoteServer(false);
+
+        LanguageManager manager = new LanguageManager(contest, controller);
+        manager.loadDefaultLanguages();
     }
 
     public void startDataViewing() {
@@ -60,5 +68,17 @@ public class ContestInstance {
             e.printStackTrace();
             System.exit(4);
         }
+    }
+
+    public void addProblem(DefaultProblem problem){
+        contest.addProblem(problem.getProblem(), problem.generateDataFiles());
+    }
+
+    public void generateAccounts(){
+        contest.generateNewAccounts(String.valueOf(ClientType.Type.TEAM), 10,true);
+    }
+
+    public void test(){
+        System.out.println(contest.getJudgements()[0].getDisplayName());
     }
 }

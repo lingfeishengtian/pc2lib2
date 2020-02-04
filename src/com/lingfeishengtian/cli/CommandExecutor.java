@@ -68,7 +68,7 @@ public class CommandExecutor {
             System.out.println("clean : Removes unnecessary backups.");
             System.out.println("save : Saves changes made");
             System.out.println("exit : Exists the script");
-            System.out.println("display <properties> : displays properties");
+            System.out.println("display <properties> : displays properties (WIP) ");
             System.out.println("+==============================+");
             return;
         } else if (command.equals("exit")) {

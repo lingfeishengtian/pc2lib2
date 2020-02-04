@@ -28,9 +28,16 @@ public class ContestInstance {
     public int DEFAULT_SCOREBOARDS = 1;
 
     /**
-     * Assumes new competition and new profile
+     * Initializes contest instance and stores the competition data.
+     * <p>
+     * If useExistingProfileFromProfilesProperties is true, then it'll attempt to search for the existing profiles. If one doesn't exist, it'll create a new one.
+     * If useExistingProfileFromProfilesProperties is false, then it'll always create a new profile.
+     *
+     * @param binPath
+     * @param useExistingProfileFromProfilesProperties
+     * @param contestPasscode
      */
-    public ContestInstance(String binPath, boolean useExistingProfileFromProfilesProperties, String contestPasscode){
+    public ContestInstance(String binPath, boolean useExistingProfileFromProfilesProperties, String contestPasscode) {
         contest = new InternalContest();
         contest.setContestPassword(contestPasscode);
 
@@ -52,33 +59,43 @@ public class ContestInstance {
         controller.setTheProfile(profileUtils.getCurrentProfile());
     }
 
+    /**
+     * Initializes the server and exposes internal API to allow modification.
+     */
     public void startDataViewing() {
         try {
             controller.initializeServer(contest);
-        }catch (FileSecurityException sec){
+        } catch (FileSecurityException sec) {
             System.exit(4);
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             System.exit(4);
         }
     }
 
-    public void saveContest(){
+    public void saveContest() {
         try {
             String profPath = contest.getProfile().getProfilePath().replace(pathToBin, "");
-            if(profPath.startsWith("/")) profPath = profPath.substring(1);
+            if (profPath.startsWith("/")) profPath = profPath.substring(1);
             contest.getProfile().setProfilePath(profPath);
             contest.storeConfiguration(mainLog);
-        }catch (IOException e){
+        } catch (IOException e) {
             System.out.println("File pathing issues!");
             System.exit(4);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             System.exit(4);
         }
     }
 
-    public void setScoringProperties(int pointsForYes, int pointsForNo, int pointsPerMinute){
+    /**
+     * Retrieves contest information and then sets values.
+     *
+     * @param pointsForYes    How many points are given for a correct answer.
+     * @param pointsForNo     How many points are counted off for a wrong answer.
+     * @param pointsPerMinute How many points are given for minutes after timer and problem solved. (Predicted I actually have no idea what this means)
+     */
+    public void setScoringProperties(int pointsForYes, int pointsForNo, int pointsPerMinute) {
         ContestInformation contestInformation = contest.getContestInformation();
         Properties prop = contestInformation.getScoringProperties();
         prop.setProperty("Base Points per Yes", String.valueOf(pointsForYes));
@@ -86,57 +103,58 @@ public class ContestInstance {
         prop.setProperty("Points per Minute (for 1st yes)", String.valueOf(pointsPerMinute));
     }
 
-    public void setDefaultScoring(){
+    public void setDefaultScoring() {
         setScoringProperties(60, -5, 0);
     }
 
-    public void addProblem(DefaultProblem problem){
+    public void addProblem(DefaultProblem problem) {
         contest.addProblem(problem.getProblem(), problem.generateDataFiles());
         setContestAutoJudges();
     }
 
-    public void setContestTime(long seconds){
+    public void setContestTime(long seconds) {
         ContestTime time = contest.getContestTime();
         time.resetClock();
         time.setContestLengthSecs(seconds);
     }
 
-    public void setDefaultContestTime(){
+    public void setDefaultContestTime() {
         long hours = 2;
         setContestTime(hours * 60 * 60);
     }
 
-    public void setContestAutoJudges(){
-        final ClientSettings[] clientSettingsExist = contest.getClientSettingsList();
+    public void setContestAutoJudges() {
         ClientSettings[] shouldAdd = new ClientSettings[0];
         Problem[] problems = contest.getProblems();
-        for (Account acc : getAccountsOfType(ClientType.Type.JUDGE)){
-            boolean shouldAddBool = true;
-            for (int i = 0; i < clientSettingsExist.length; i++) {
-                if(clientSettingsExist[i].getClientId().equals(acc.getClientId())){
-                    shouldAddBool = false;
-                    break;
+        for (Account acc : getAccountsOfType(ClientType.Type.JUDGE)) {
+//            int clientSettingsIndex = -1;
+//            for (int i = 0; i < clientSettingsExist.length; i++) {
+//                if (clientSettingsExist[i].getClientId().equals(acc.getClientId())) {
+//                    clientSettingsIndex = i;
+//                    break;
+//            }
+//            }
+            ClientSettings c = new ClientSettings(acc.getClientId());
+            c.setAutoJudging(true);
+            Filter filter = c.getAutoJudgeFilter();
+            filter.setFilterOn();
+            filter.setUsingProblemFilter(true);
+            if (filter.isFilteringProblems()) {
+                for (Problem p : problems) {
+                    filter.addProblem(p);
                 }
             }
-            if(shouldAddBool) {
-                ClientSettings c = new ClientSettings(acc.getClientId());
-                c.setAutoJudging(true);
-                Filter filter = c.getAutoJudgeFilter();
-                filter.setFilterOn();
-                filter.setUsingProblemFilter(true);
-                if (filter.isFilteringProblems()) {
-                    for (Problem p : problems) {
-                        filter.addProblem(p);
-                    }
-                }
 
-                ClientSettings[] tmp = shouldAdd;
-                shouldAdd = new ClientSettings[shouldAdd.length + 1];
-                for (int i = 0; i < tmp.length; i++) {
-                    shouldAdd[i] = tmp[i];
-                }
-                shouldAdd[tmp.length] = c;
+//            if(clientSettingsIndex == -1) {
+            ClientSettings[] tmp = shouldAdd;
+            shouldAdd = new ClientSettings[shouldAdd.length + 1];
+            for (int i = 0; i < tmp.length; i++) {
+                shouldAdd[i] = tmp[i];
             }
+            shouldAdd[tmp.length] = c;
+//            } else {
+//                clientSettingsExist[clientSettingsIndex] = c;
+//            }
         }
         for (ClientSettings settings :
                 shouldAdd) {
@@ -144,25 +162,25 @@ public class ContestInstance {
         }
     }
 
-    public void setDefaultNumberOfAccounts(){
+    public void setDefaultNumberOfAccounts() {
         checkAndGenerate(ClientType.Type.ADMINISTRATOR);
         checkAndGenerate(ClientType.Type.JUDGE);
         checkAndGenerate(ClientType.Type.TEAM);
         checkAndGenerate(ClientType.Type.SCOREBOARD);
     }
 
-    public void generateSingleAccount(ClientType.Type type){
+    public void generateSingleAccount(ClientType.Type type) {
         contest.generateNewAccounts(String.valueOf(type), 1, true);
     }
 
-    private void checkAndGenerate(ClientType.Type type){
+    private void checkAndGenerate(ClientType.Type type) {
         int existingAmtOfAcc = getAccountsOfType(type).size();
-        if(getDefaultFrom(type) > existingAmtOfAcc)
+        if (getDefaultFrom(type) > existingAmtOfAcc)
             contest.generateNewAccounts(String.valueOf(type), getDefaultFrom(type) - existingAmtOfAcc, true);
     }
 
-    private int getDefaultFrom(ClientType.Type type){
-        switch (type){
+    private int getDefaultFrom(ClientType.Type type) {
+        switch (type) {
             case TEAM:
                 return DEFAULT_TEAMS;
             case ADMINISTRATOR:

@@ -1,4 +1,4 @@
-# pc2lib2: The PC^2 Jailbreak
+# pc2lib2: The PC² Jailbreak
 pc2lib remade.
 
 pc2lib2 allows you to automatically create contests with one button. No need for even opening the administrator panel to setup!
@@ -36,3 +36,5 @@ ContestInstance contest = new ContestInstance(<path to your bin folder in your p
 contest.startDataViewing(); // Open the contest and start viewing data
 System.exit(0); // Useful for CLI applications
 ```
+
+### Methods in Contest Instance

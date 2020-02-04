@@ -5,6 +5,16 @@ import java.util.Scanner;
 public class TestProblemSolution {
     public static void main(String[] args) throws FileNotFoundException {
         Scanner scan = new Scanner(new File("problem.in"));
-        System.out.println("1 2 3 4 5");
+        while (scan.hasNext()) {
+            String x = scan.nextLine();
+            for (char a : x.toCharArray()) {
+                if (a == ' ') {
+                    System.out.print(a + "");
+                } else {
+                    int b = (a - 96);
+                    System.out.print(b + "");
+                }
+            }
+        }
     }
 }

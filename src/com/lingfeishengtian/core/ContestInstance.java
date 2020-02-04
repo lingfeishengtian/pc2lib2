@@ -8,8 +8,11 @@ import edu.csus.ecs.pc2.core.model.*;
 import edu.csus.ecs.pc2.core.security.FileSecurityException;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Properties;
+import java.util.Scanner;
 import java.util.Vector;
 
 public class ContestInstance {
@@ -173,11 +176,87 @@ public class ContestInstance {
         }
     }
 
-    private Vector<Account> getAccountsOfType(ClientType.Type type){
+    private Vector<Account> getAccountsOfType(ClientType.Type type) {
         return contest.getAccounts(type);
     }
 
-    public void test(){
+    public void bulkAddProblems(File inoutdir) {
+        bulkAddProblems(inoutdir, null);
+    }
+
+    public String parseName(String name) {
+        boolean isIn = name.endsWith(".in");
+        name = name.substring(0, name.length() - (isIn ? ".in" : ".out").length());
+        String[] splitName = name.split("_");
+        String newString = "";
+        for (int i = 0; i < splitName.length; i++) {
+            newString += (i == 0 ? "" : " ") + Character.toUpperCase(splitName[i].charAt(0)) + splitName[i].substring(1);
+        }
+        return newString;
+    }
+
+    public void bulkAddProblems(File inoutdir, File problemList) {
+        HashMap<String, InOutPair> pairs = new HashMap<>();
+
+        for (File pair : inoutdir.listFiles()) {
+            String name = parseName(pair.getName());
+            if (!pair.getName().contains(" ") && (pair.getName().contains(".in") || pair.getName().contains(".out") || pair.getName().contains(".dat"))) {
+                InOutPair tmp = pairs.get(name);
+                if (tmp == null) pairs.put(name, new InOutPair());
+                pairs.get(name).put(pair);
+            } else {
+                System.out.println("Invalid in out directory file " + pair.getAbsolutePath());
+            }
+        }
+
+        try {
+            Scanner scan = null;
+            if (problemList != null)
+                scan = new Scanner(problemList);
+
+            if (inoutdir != null) {
+                DefaultProblem problem;
+                if (scan != null)
+                    while (scan.hasNext()) {
+                        String name = scan.nextLine().trim();
+                        InOutPair pair = pairs.get(name);
+                        problem = new DefaultProblem(name, pair.infile, pair.outfile);
+                        addProblem(problem);
+                    }
+                else
+                    pairs.forEach((String name, InOutPair pair) -> {
+                        try {
+                            addProblem(new DefaultProblem(name, pair.infile, pair.outfile));
+                        } catch (ProblemException e) {
+                            System.out.println("Problem definition error of " + name);
+                        }
+                    });
+            } else {
+                System.out.println("Your inout directory does not exist.");
+            }
+        } catch (FileNotFoundException | ProblemException ex) {
+            System.out.println("Invalid file input.");
+        }
+    }
+
+    public String getPathToBin() {
+        return pathToBin;
+    }
+
+    private class InOutPair {
+        public File infile, outfile;
+
+        public InOutPair() {
+
+        }
+
+        public void put(File x) {
+            if (x.getName().endsWith(".dat") || x.getName().endsWith(".in")) infile = x;
+            else if (x.getName().endsWith(".out")) outfile = x;
+        }
+    }
+
+    public void test() {
         System.out.println(contest.getJudgements()[0].getDisplayName());
     }
 }

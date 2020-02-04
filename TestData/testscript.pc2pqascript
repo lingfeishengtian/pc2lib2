@@ -1,5 +1,6 @@
-load /Users/hunterhan/Desktop/PC2PQA_WithCustomScripts/pc2-9.6.0/bin chscompsci
-add account TEAM
-add problem PPOH TestData/problem.in TestData/problem.out
+# Setup Dulles competition script!
+new /Users/hunterhan/Downloads/DHSCOMP20-master chscompsci
+add problem /Users/hunterhan/Downloads/DHSCOMP20-master/_HANDSON/packet4/judgesdata /Users/hunterhan/Downloads/DHSCOMP20-master/_HANDSON/packet4/problemList.txt
+setDefaultContest
 save
 exit

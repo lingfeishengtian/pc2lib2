@@ -1,28 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Text?>
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="439.0" prefWidth="641.0"
             xmlns="http://javafx.com/javafx/11.0.1" fx:controller="com.lingfeishengtian.gui.GUIStarter">
-   <children>
-      <TextArea fx:id="contestLog" editable="false" layoutX="7.0" layoutY="7.0" prefHeight="189.0" prefWidth="626.0"
-                text="Started Log"/>
-      <Text layoutX="19.0" layoutY="222.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Contest Status:"
-            wrappingWidth="91.0"/>
-      <Text id="contestStatusTxt" fx:id="contestStatusTxt" fill="RED" layoutX="110.0" layoutY="222.0"
-            strokeType="OUTSIDE" strokeWidth="0.0" text="Not Loaded"/>
-      <Button defaultButton="true" layoutX="19.0" layoutY="232.0" mnemonicParsing="false" onAction="#loadContestBin"
-              text="Load Contest Bin Directory"/>
-      <Text layoutX="19.0" layoutY="284.0" strokeType="OUTSIDE" strokeWidth="0.0"
-            text="Hey there! Here are some instructions. You must load the contest bin directory before doing any other operations. You can also create a contest directory if you do not already have one. If you load a contest directory in a directory that is not related to PC^2, it'll generate new files, so please be careful and make sure you are setting the contest bin directory to the correct folder.  It is also recommended if you are creating a new contest directory to set the destination folder to a folder without existing pc2 contest folders or it may override them."
-            wrappingWidth="390.9716796875"/>
-      <Button layoutX="197.0" layoutY="232.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="186.0"
-              text="Create New Contest Directory"/>
-      <Button fx:id="setDefaultContestSettingsBtn" layoutX="450.0" layoutY="232.0" mnemonicParsing="false"
-              prefHeight="27.0" prefWidth="164.0" text="Set Default Competition"/>
-      <Text layoutX="450.0" layoutY="222.0" strokeType="OUTSIDE" strokeWidth="0.0" text="OPERATIONS"/>
-   </children>
+    <children>
+        <TextArea fx:id="contestLog" editable="false" layoutX="7.0" layoutY="7.0" prefHeight="189.0" prefWidth="626.0"
+                  text="Started Log" wrapText="true"/>
+        <Text layoutX="19.0" layoutY="222.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Contest Status:"
+              wrappingWidth="91.0"/>
+        <Text id="contestStatusTxt" fx:id="contestStatusTxt" fill="RED" layoutX="110.0" layoutY="222.0"
+              strokeType="OUTSIDE" strokeWidth="0.0" text="Not Loaded"/>
+        <Button defaultButton="true" layoutX="19.0" layoutY="232.0" mnemonicParsing="false" onAction="#loadContestBin"
+                text="Load Contest Bin Directory"/>
+        <Text layoutX="19.0" layoutY="284.0" strokeType="OUTSIDE" strokeWidth="0.0"
+              text="Hey there! Here are some instructions. You must load the contest bin directory before doing any other operations. You can also create a contest directory if you do not already have one. If you load a contest directory in a directory that is not related to PC^2, it'll generate new files, so please be careful and make sure you are setting the contest bin directory to the correct folder.  It is also recommended if you are creating a new contest directory to set the destination folder to a folder without existing pc2 contest folders or it may override them."
+              wrappingWidth="390.9716796875"/>
+        <Button layoutX="197.0" layoutY="232.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="186.0"
+                text="Create New Contest Directory"/>
+        <Button fx:id="setDefaultContestSettingsBtn" layoutX="450.0" layoutY="232.0" mnemonicParsing="false"
+                prefHeight="27.0" prefWidth="164.0" text="Set Default Competition"/>
+        <Text layoutX="450.0" layoutY="222.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Operations"/>
+    </children>
 </AnchorPane>

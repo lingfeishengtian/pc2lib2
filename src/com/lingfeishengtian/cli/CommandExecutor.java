@@ -5,6 +5,7 @@ import com.lingfeishengtian.core.DefaultProblem;
 import com.lingfeishengtian.utils.Cleaner;
 import com.lingfeishengtian.ziputils.ZipCreator;
 import edu.csus.ecs.pc2.core.model.ClientType;
+import edu.csus.ecs.pc2.core.security.FileSecurityException;
 
 import java.io.*;
 
@@ -43,7 +44,7 @@ public class CommandExecutor {
         }
     }
 
-    private void execute(String[] args, boolean fromFile) {
+    public void execute(String[] args, boolean fromFile) throws FileSecurityException {
         String command = args[0];
         if (command.startsWith("#")) return;
         if (command.equals("help")) {
@@ -96,33 +97,37 @@ public class CommandExecutor {
             } else {
                 System.out.println("Cannot run script from a script. Operation too dangerous.");
             }
-        }
+        } else if (command.equals("load")) {
+            File fileLoc = new File(args[1]);
+            if (fileLoc.exists()) {
+                String filePath = fileLoc.getAbsolutePath();
+                if (filePath.endsWith("/"))
+                    filePath = filePath.substring(0, filePath.length() - 1);
+                contest = new ContestInstance(filePath, true, args[2]);
+                try {
+                    contest.startDataViewing();
+                } catch (FileSecurityException e) {
+                    throw e;
+                } catch (Exception e) {
+                    System.out.println("Weird unexpected error while loading the competition.");
+                }
+            } else {
+                System.out.println("That directory/file does not exist.");
+            }
+        } else if (command.equals("new")) {
+            File dir = new File(args[1]);
+            if (dir.exists())
+                try {
+                    ZipCreator.unzipTo(dir.getAbsolutePath());
+                } catch (IOException e) {
+                    System.out.println("There was an error while trying to unzip.");
+                }
+            executeCommand(new String[]{"load", dir.getAbsolutePath() + File.separator + "pc2-9.6.0" + File.separator + "bin", args[2]});
+        } else
+            System.out.println("You must load a contest before you make any commands.");
 
         try {
-            if (contest == null) {
-                if (command.equals("load")) {
-                    File fileLoc = new File(args[1]);
-                    if (fileLoc.exists()) {
-                        String filePath = fileLoc.getAbsolutePath();
-                        if (filePath.endsWith("/"))
-                            filePath = filePath.substring(0, filePath.length() - 1);
-                        contest = new ContestInstance(filePath, true, args[2]);
-                        contest.startDataViewing();
-                    } else {
-                        System.out.println("That directory/file does not exist.");
-                    }
-                } else if (command.equals("new")) {
-                    File dir = new File(args[1]);
-                    if (dir.exists())
-                        try {
-                            ZipCreator.unzipTo(dir.getAbsolutePath());
-                        } catch (IOException e) {
-                            System.out.println("There was an error while trying to unzip.");
-                        }
-                    executeCommand(new String[]{"load", dir.getAbsolutePath() + File.separator + "pc2-9.6.0" + File.separator + "bin", args[2]});
-                } else
-                    System.out.println("You must load a contest before you make any commands.");
-            } else {
+            if (contest != null) {
                 if (command.equals("add")) {
                     addProperty(contest, args);
                 } else if (command.equals("save")) {
@@ -150,6 +155,10 @@ public class CommandExecutor {
     }
 
     public void executeCommand(String[] args) {
-        execute(args, false);
+        try {
+            execute(args, false);
+        } catch (Exception e) {
+            System.out.println("Invalid contest passcode.");
+        }
     }
 }

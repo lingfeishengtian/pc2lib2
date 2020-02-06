@@ -45,6 +45,7 @@ public class ContestInstance {
         StaticLog.setLog(new Log(binPath + File.separator + "logs", "pc2lib2staticLog"));
 
         controller = new InternalController(contest);
+        controller.setHaltOnFatalError(false);
         controller.setUsingGUI(false);
         controller.setLog(mainLog);
 
@@ -62,15 +63,8 @@ public class ContestInstance {
     /**
      * Initializes the server and exposes internal API to allow modification.
      */
-    public void startDataViewing() {
-        try {
-            controller.initializeServer(contest);
-        } catch (FileSecurityException sec) {
-            System.exit(4);
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.exit(4);
-        }
+    public void startDataViewing() throws FileSecurityException, IOException, ClassNotFoundException {
+        controller.initializeServer(contest);
     }
 
     public void saveContest() {

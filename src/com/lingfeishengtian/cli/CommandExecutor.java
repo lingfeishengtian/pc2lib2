@@ -116,6 +116,10 @@ public class CommandExecutor {
             }
         } else if (command.equals("new")) {
             File dir = new File(args[1]);
+            File existing = (new File(dir.getAbsolutePath() + File.separator + "pc2-9.6.0"));
+            if (existing.exists()) {
+                deleteDir(existing);
+            }
             if (dir.exists())
                 try {
                     ZipCreator.unzipTo(dir.getAbsolutePath());
@@ -160,5 +164,15 @@ public class CommandExecutor {
         } catch (Exception e) {
             System.out.println("Invalid contest passcode.");
         }
+    }
+
+    boolean deleteDir(File directoryToBeDeleted) {
+        File[] allContents = directoryToBeDeleted.listFiles();
+        if (allContents != null) {
+            for (File file : allContents) {
+                deleteDir(file);
+            }
+        }
+        return directoryToBeDeleted.delete();
     }
 }

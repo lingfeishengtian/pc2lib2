@@ -1,6 +1,7 @@
 package com.lingfeishengtian.gui;
 
 import com.lingfeishengtian.cli.CommandExecutor;
+import edu.csus.ecs.pc2.core.security.FileSecurityException;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -8,9 +9,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
@@ -74,23 +73,18 @@ public class GUIStarter extends Application {
 
     @FXML
     public void loadContestBin(ActionEvent actionEvent) {
-        DirectoryChooser directoryChooser = new DirectoryChooser();
-        directoryChooser.setTitle("Choose PC^2 Root Directory");
-        directoryChooser.setInitialDirectory(new File(System.getProperty("user.home")));
-        File fileChosen = directoryChooser.showDialog(((Node) actionEvent.getTarget()).getScene().getWindow());
+        File fileChosen = getUserChosenDirectory(actionEvent);
 
         if (fileChosen != null) {
             File bin = new File(fileChosen.getAbsolutePath() + File.separator + "bin");
             if (bin.exists()) {
-                TextInputDialog textInputDialog = new TextInputDialog();
-                textInputDialog.setTitle("Contest Passcode");
-                textInputDialog.setHeaderText("Enter the existing contest passcode or new contest passcode.");
-                Optional<String> str = textInputDialog.showAndWait();
+                Optional<String> str = getUserEnteredPassword();
                 try {
                     executor.execute(new String[]{"load", bin.getAbsolutePath(), str.isPresent() ? str.orElse("No reason error") : ""}, false);
                     contestStatusTxt.setText("Loaded " + bin.getAbsolutePath());
                     contestStatusTxt.setFill(Color.GREEN);
                     enableContestOperations();
+                    contestLog.setScrollTop(Double.MAX_VALUE);
                 } catch (Exception e) {
                     System.out.println("Contest couldn't be loaded, try again!");
                     e.printStackTrace();
@@ -101,6 +95,72 @@ public class GUIStarter extends Application {
             }
         } else {
             System.out.println("Operation choose pc2 root directory cancelled.");
+        }
+    }
+
+    private Optional<String> getUserEnteredPassword() {
+        TextInputDialog textInputDialog = new TextInputDialog();
+        textInputDialog.setTitle("Contest Passcode");
+        textInputDialog.setHeaderText("Enter the existing contest passcode or new contest passcode.");
+        return textInputDialog.showAndWait();
+    }
+
+    private File getUserChosenDirectory(ActionEvent actionEvent) {
+        DirectoryChooser directoryChooser = new DirectoryChooser();
+        directoryChooser.setTitle("Choose PC^2 Root Directory");
+        directoryChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+        return directoryChooser.showDialog(((Node) actionEvent.getTarget()).getScene().getWindow());
+    }
+
+    @FXML
+    public void createContestFolder(ActionEvent actionEvent) {
+        File chosen = getUserChosenDirectory(actionEvent);
+
+        if (chosen.isDirectory()) {
+            System.out.println("Attempting to create a new contest folder at " + chosen.getAbsolutePath());
+
+            boolean sameNameExists = false;
+            for (File x : chosen.listFiles()) {
+                if (x.getName().equals("pc2-9.6.0")) {
+                    sameNameExists = true;
+                    break;
+                }
+            }
+
+            if (sameNameExists) {
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Override Alert");
+                alert.setHeaderText("PC^2 Contest Found!");
+                alert.setContentText("Are you sure you want to override an existing PC^2 contest?");
+
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.get() != ButtonType.OK) {
+                    System.out.println("Operation cancelled due to pre-existing PC^2 contest and user cancelled.");
+                    return;
+                }
+            }
+
+            Optional<String> password = getUserEnteredPassword();
+
+            if (!password.isPresent()) {
+                System.out.println("No password entered!");
+                return;
+            } else if (password.toString().length() <= 1) {
+                System.out.println("Password too short!");
+                return;
+            }
+            try {
+                executor.execute(new String[]{"new", chosen.getAbsolutePath(), password.orElse("")}, true);
+                System.out.println("Success!");
+                contestStatusTxt.setText("Loaded " + chosen.getAbsolutePath());
+                contestStatusTxt.setFill(Color.GREEN);
+                enableContestOperations();
+                contestLog.setScrollTop(Double.MAX_VALUE);
+            } catch (FileSecurityException e) {
+                System.out.println("Contest had an issue and couldn't create your contest. Likely a file saving issue.");
+            }
+        } else {
+            System.out.println("Chosen file is not a directory.");
         }
     }
 }

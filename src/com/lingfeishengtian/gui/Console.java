@@ -14,6 +14,5 @@ public class Console extends OutputStream {
     @Override
     public void write(int i) {
         output.appendText(String.valueOf((char) i));
-        output.setScrollTop(Double.MAX_VALUE);
     }
 }

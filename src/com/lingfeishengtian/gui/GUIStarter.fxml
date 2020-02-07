@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Text?>
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="409.0" prefWidth="641.0"
             xmlns="http://javafx.com/javafx/11.0.1" fx:controller="com.lingfeishengtian.gui.GUIStarter">
     <children>
         <TextArea fx:id="contestLog" editable="false" layoutX="7.0" layoutY="7.0" prefHeight="189.0" prefWidth="626.0"
-                  text="Started Log" wrapText="true"/>
+                  text="欢迎来到PC2PQA&#10;请您先加载新比赛文件柜或创新比赛文件柜&#10;&#10;如果你读不懂中文，我只能笑呵呵呵呵呵&#10;&#10;Started Log"
+                  wrapText="true"/>
         <Text layoutX="19.0" layoutY="222.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Contest Status:"
               wrappingWidth="91.0"/>
         <Text id="contestStatusTxt" fx:id="contestStatusTxt" fill="RED" layoutX="110.0" layoutY="222.0"
@@ -21,7 +21,9 @@
         <Button layoutX="197.0" layoutY="232.0" mnemonicParsing="false" onAction="#createContestFolder"
                 prefHeight="27.0" prefWidth="186.0" text="Create New Contest Directory"/>
         <Button fx:id="setDefaultContestSettingsBtn" layoutX="450.0" layoutY="232.0" mnemonicParsing="false"
-                prefHeight="27.0" prefWidth="164.0" text="Set Default Competition"/>
+                onAction="#setDefaultContest" prefHeight="27.0" prefWidth="164.0" text="Set Default Competition"/>
         <Text layoutX="450.0" layoutY="222.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Operations"/>
+        <Button layoutX="450.0" layoutY="367.0" mnemonicParsing="false" onAction="#openScriptEditor" prefHeight="27.0"
+                prefWidth="164.0" text="Open Script Editor"/>
     </children>
 </AnchorPane>

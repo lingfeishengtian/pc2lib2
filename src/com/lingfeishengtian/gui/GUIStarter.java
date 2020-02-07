@@ -163,4 +163,22 @@ public class GUIStarter extends Application {
             System.out.println("Chosen file is not a directory.");
         }
     }
+
+    @FXML
+    public void setDefaultContest(ActionEvent actionEvent) throws FileSecurityException {
+        executor.execute(new String[]{"setDefaultContest"}, true);
+    }
+
+    @FXML
+    public void openScriptEditor(ActionEvent actionEvent) {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("ScriptEditor.fxml"));
+            Parent root1 = fxmlLoader.load();
+            Stage stage = new Stage();
+            stage.setScene(new Scene(root1));
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

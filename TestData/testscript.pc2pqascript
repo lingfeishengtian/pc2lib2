@@ -1,6 +1,5 @@
 # Setup Dulles competition script!
-new /Users/hunterhan/Downloads/DHSCOMP20-master dulleshs
+new /Users/hunterhan/Desktop/PC2PQA_WithCustomScripts/PP/ chscompsci
 add problem /Users/hunterhan/Downloads/DHSCOMP20-master/_HANDSON/packet4/judgesdata /Users/hunterhan/Downloads/DHSCOMP20-master/_HANDSON/packet4/problemList.txt
 setDefaultContest
 save
-exit

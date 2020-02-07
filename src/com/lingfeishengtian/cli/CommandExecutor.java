@@ -127,8 +127,7 @@ public class CommandExecutor {
                     System.out.println("There was an error while trying to unzip.");
                 }
             executeCommand(new String[]{"load", dir.getAbsolutePath() + File.separator + "pc2-9.6.0" + File.separator + "bin", args[2]});
-        } else
-            System.out.println("You must load a contest before you make any commands.");
+        }
 
         try {
             if (contest != null) {
@@ -136,18 +135,24 @@ public class CommandExecutor {
                     addProperty(contest, args);
                 } else if (command.equals("save")) {
                     contest.saveContest();
+                    System.out.println("Contest saved!");
                 } else if (command.equals("autoJudge")) {
                     contest.setContestAutoJudges();
                 } else if (command.equals("clean")) {
                     Cleaner.clean(contest.getPathToBin());
                 } else if (command.equals("setDefaultTime")) {
                     contest.setDefaultContestTime();
+                } else if (command.equals("setDefaultScore")) {
+                    contest.setDefaultScoring();
                 } else if (command.equals("setDefaultContest")) {
                     contest.setDefaultContestTime();
-                    contest.setContestAutoJudges();
-                    contest.setContestAutoJudges();
                     contest.setDefaultNumberOfAccounts();
+                    contest.setDefaultScoring();
+                    contest.setContestAutoJudges();
+                    System.out.println("Default values set!");
                 }
+            } else {
+                System.out.println(command + " is either an invalid command or your contest has not been loaded yet!");
             }
         } catch (IndexOutOfBoundsException e) {
             System.out.println("Not enough arguments.");

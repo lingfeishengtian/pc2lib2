@@ -1,4 +1,4 @@
-package com.lingfeishengtian.gui;
+package com.lingfeishengtian.gui.script;
 
 import com.lingfeishengtian.cli.CommandExecutor;
 import edu.csus.ecs.pc2.core.security.FileSecurityException;

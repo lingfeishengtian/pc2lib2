@@ -8,9 +8,41 @@ import edu.csus.ecs.pc2.core.model.ClientType;
 import edu.csus.ecs.pc2.core.security.FileSecurityException;
 
 import java.io.*;
+import java.util.HashMap;
 
 public class CommandExecutor {
     ContestInstance contest;
+    public static HashMap<language, HashMap<String, String>> translations = new HashMap<>();
+    private language lang = language.en;
+
+    public CommandExecutor() {
+        HashMap<String, String> chinese = new HashMap<>();
+        chinese.put("助", "help");
+        chinese.put("运行", "run");
+        chinese.put("加载", "load");
+        chinese.put("新", "new");
+        chinese.put("加", "add");
+        chinese.put("账号", "account");
+        chinese.put("题目", "problem");
+        chinese.put("自动判断", "autoJudge");
+        chinese.put("设分", "setDefaultTime");
+        chinese.put("设时", "setDefaultScore");
+        chinese.put("自设赛", "setDefaultContest");
+        chinese.put("清理", "clean");
+        chinese.put("存", "save");
+        chinese.put("退", "exit");
+        chinese.put("现实", "display");
+        chinese.put("设语", "setLang");
+
+        translations.put(language.cn, chinese);
+    }
+
+    private void translate(String[] args) {
+        for (int i = 0; i < args.length; i++) {
+            String translated = translations.get(lang).get(args[i]);
+            if (translated != null) args[i] = translated;
+        }
+    }
 
     public static void addProperty(ContestInstance contest, String[] args) {
         String property = args[1];
@@ -45,6 +77,9 @@ public class CommandExecutor {
     }
 
     public void execute(String[] args, boolean fromFile) throws FileSecurityException {
+        if (lang != language.en) {
+            translate(args);
+        }
         String command = args[0];
         if (command.startsWith("#")) return;
         if (command.equals("help")) {
@@ -70,6 +105,7 @@ public class CommandExecutor {
             System.out.println("save : Saves changes made");
             System.out.println("exit : Exists the script");
             System.out.println("display <properties> : displays properties (WIP) ");
+            System.out.println("setLang <en, cn>");
             System.out.println("+==============================+");
             return;
         } else if (command.equals("exit")) {
@@ -127,40 +163,58 @@ public class CommandExecutor {
                     System.out.println("There was an error while trying to unzip.");
                 }
             executeCommand(new String[]{"load", dir.getAbsolutePath() + File.separator + "pc2-9.6.0" + File.separator + "bin", args[2]});
-        }
-
-        try {
-            if (contest != null) {
-                if (command.equals("add")) {
-                    addProperty(contest, args);
-                } else if (command.equals("save")) {
-                    contest.saveContest();
-                    System.out.println("Contest saved!");
-                } else if (command.equals("autoJudge")) {
-                    contest.setContestAutoJudges();
-                } else if (command.equals("clean")) {
-                    Cleaner.clean(contest.getPathToBin());
-                } else if (command.equals("setDefaultTime")) {
-                    contest.setDefaultContestTime();
-                } else if (command.equals("setDefaultScore")) {
-                    contest.setDefaultScoring();
-                } else if (command.equals("setDefaultContest")) {
-                    contest.setDefaultContestTime();
-                    contest.setDefaultNumberOfAccounts();
-                    contest.setDefaultScoring();
-                    contest.setContestAutoJudges();
-                    System.out.println("Default values set!");
-                }
-            } else {
-                System.out.println(command + " is either an invalid command or your contest has not been loaded yet!");
+        } else if (command.equals("setLang")) {
+            try {
+                lang = language.valueOf(args[1]);
+            } catch (IllegalArgumentException e) {
+                System.out.println("Not a language available!");
             }
-        } catch (IndexOutOfBoundsException e) {
-            System.out.println("Not enough arguments.");
-            e.printStackTrace();
-        } catch (Exception e) {
-            System.out.println("Syntax error!");
-            e.printStackTrace();
+        } else {
+            try {
+                if (contest != null) {
+                    if (command.equals("add")) {
+                        addProperty(contest, args);
+                    } else if (command.equals("save")) {
+                        contest.saveContest();
+                        System.out.println("Contest saved!");
+                    } else if (command.equals("autoJudge")) {
+                        contest.setContestAutoJudges();
+                    } else if (command.equals("clean")) {
+                        Cleaner.clean(contest.getPathToBin());
+                    } else if (command.equals("setDefaultTime")) {
+                        contest.setDefaultContestTime();
+                    } else if (command.equals("setDefaultScore")) {
+                        contest.setDefaultScoring();
+                    } else if (command.equals("setDefaultContest")) {
+                        contest.setDefaultContestTime();
+                        contest.setDefaultNumberOfAccounts();
+                        contest.setDefaultScoring();
+                        contest.setContestAutoJudges();
+                        System.out.println("Default values set!");
+                    }
+                } else {
+                    System.out.println(command + " is either an invalid command or your contest has not been loaded yet!");
+                }
+            } catch (IndexOutOfBoundsException e) {
+                System.out.println("Not enough arguments.");
+                e.printStackTrace();
+            } catch (Exception e) {
+                System.out.println("Syntax error!");
+                e.printStackTrace();
+            }
         }
+    }
+
+    private void error(String message) {
+
+    }
+
+    private enum language {
+        en, cn
+    }
+
+    private enum errors {
+        notEnoughArgs, syntax, notALang, scriptFromScript, unexpected, fileDoesntExist
     }
 
     public void executeCommand(String[] args) {

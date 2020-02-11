@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Text?>
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="423.0" prefWidth="602.0"
-            xmlns="http://javafx.com/javafx/11.0.1" fx:controller="com.lingfeishengtian.gui.ScriptEditor">
+            xmlns="http://javafx.com/javafx/11.0.1" fx:controller="com.lingfeishengtian.gui.script.ScriptEditor">
     <children>
         <TextArea fx:id="editor" layoutX="15.0" layoutY="14.0" prefHeight="297.0" prefWidth="573.0"
                   promptText="Enter your code here."/>

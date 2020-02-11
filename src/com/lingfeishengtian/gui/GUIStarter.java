@@ -1,6 +1,7 @@
 package com.lingfeishengtian.gui;
 
 import com.lingfeishengtian.cli.CommandExecutor;
+import com.lingfeishengtian.gui.utils.Console;
 import edu.csus.ecs.pc2.core.security.FileSecurityException;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -13,6 +14,7 @@ import javafx.scene.control.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
@@ -27,6 +29,16 @@ public class GUIStarter extends Application {
     public Button setDefaultContestSettingsBtn;
     @FXML
     public TextArea contestLog;
+    @FXML
+    public Button saveChangesBtn;
+    @FXML
+    public Button addProblemBtn;
+    @FXML
+    public Button chooseProblemListBtn;
+    @FXML
+    public Text problemListChosenTxt;
+    @FXML
+    public Button clearProblemListBtn;
     PrintStream old = System.out;
 
     public static void main(String[] args) {
@@ -63,17 +75,34 @@ public class GUIStarter extends Application {
         System.exit(0);
     }
 
+    private File problemList = null;
+
     private void disableContestOperations() {
         setDefaultContestSettingsBtn.setDisable(true);
+        saveChangesBtn.setDisable(true);
+        addProblemBtn.setDisable(true);
+        chooseProblemListBtn.setDisable(true);
+        clearProblemListBtn.setDisable(true);
     }
 
     private void enableContestOperations() {
         setDefaultContestSettingsBtn.setDisable(false);
+        saveChangesBtn.setDisable(false);
+        addProblemBtn.setDisable(false);
+        chooseProblemListBtn.setDisable(false);
+        clearProblemListBtn.setDisable(false);
+    }
+
+    private Optional<String> getUserEnteredPassword() {
+        TextInputDialog textInputDialog = new TextInputDialog();
+        textInputDialog.setTitle("Contest Passcode");
+        textInputDialog.setHeaderText("Enter the existing contest passcode or new contest passcode.");
+        return textInputDialog.showAndWait();
     }
 
     @FXML
     public void loadContestBin(ActionEvent actionEvent) {
-        File fileChosen = getUserChosenDirectory(actionEvent);
+        File fileChosen = getUserChosenDirectory(actionEvent, null);
 
         if (fileChosen != null) {
             File bin = new File(fileChosen.getAbsolutePath() + File.separator + "bin");
@@ -98,23 +127,22 @@ public class GUIStarter extends Application {
         }
     }
 
-    private Optional<String> getUserEnteredPassword() {
-        TextInputDialog textInputDialog = new TextInputDialog();
-        textInputDialog.setTitle("Contest Passcode");
-        textInputDialog.setHeaderText("Enter the existing contest passcode or new contest passcode.");
-        return textInputDialog.showAndWait();
-    }
-
-    private File getUserChosenDirectory(ActionEvent actionEvent) {
+    private File getUserChosenDirectory(ActionEvent actionEvent, String title) {
         DirectoryChooser directoryChooser = new DirectoryChooser();
-        directoryChooser.setTitle("Choose PC^2 Root Directory");
+        if (title == null) title = "Choose PC^2 Root Directory";
+        directoryChooser.setTitle(title);
         directoryChooser.setInitialDirectory(new File(System.getProperty("user.home")));
         return directoryChooser.showDialog(((Node) actionEvent.getTarget()).getScene().getWindow());
     }
 
     @FXML
+    public void setDefaultContest(ActionEvent actionEvent) throws FileSecurityException {
+        executor.execute(new String[]{"setDefaultContest"}, true);
+    }
+
+    @FXML
     public void createContestFolder(ActionEvent actionEvent) {
-        File chosen = getUserChosenDirectory(actionEvent);
+        File chosen = getUserChosenDirectory(actionEvent, null);
 
         if (chosen.isDirectory()) {
             System.out.println("Attempting to create a new contest folder at " + chosen.getAbsolutePath());
@@ -165,14 +193,9 @@ public class GUIStarter extends Application {
     }
 
     @FXML
-    public void setDefaultContest(ActionEvent actionEvent) throws FileSecurityException {
-        executor.execute(new String[]{"setDefaultContest"}, true);
-    }
-
-    @FXML
     public void openScriptEditor(ActionEvent actionEvent) {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("ScriptEditor.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("script/ScriptEditor.fxml"));
             Parent root1 = fxmlLoader.load();
             Stage stage = new Stage();
             stage.setScene(new Scene(root1));
@@ -180,5 +203,48 @@ public class GUIStarter extends Application {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @FXML
+    public void saveChanges(ActionEvent actionEvent) {
+        try {
+            executor.execute(new String[]{"save"}, true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Error in saving values! Could not save competition.");
+        }
+    }
+
+    @FXML
+    public void addProblemsFromDirectory(ActionEvent actionEvent) {
+        File chosen = getUserChosenDirectory(actionEvent, "Choose Directory With inouts");
+        if (chosen.exists()) {
+            if (problemList == null) {
+                executor.executeCommand(new String[]{"add", "problem", chosen.getAbsolutePath()});
+            } else {
+                executor.executeCommand(new String[]{"add", "problem", chosen.getAbsolutePath(), problemList.getAbsolutePath()});
+            }
+            System.out.println("Problems added");
+        } else {
+            System.out.println("An unexpected error occurred!");
+        }
+    }
+
+    @FXML
+    public void chooseProblemList(ActionEvent actionEvent) {
+        FileChooser file = new FileChooser();
+        file.setTitle("Choose Problem list");
+        file.getExtensionFilters().add(new FileChooser.ExtensionFilter("Text Files (*.txt)", "*.txt"));
+        File newFile = file.showOpenDialog(((Node) actionEvent.getTarget()).getScene().getWindow());
+        if (newFile != null) {
+            problemList = newFile;
+            problemListChosenTxt.setText(newFile.getName() + " is the current selected problem list.");
+        }
+    }
+
+    @FXML
+    public void clearProblemList(ActionEvent actionEvent) {
+        System.out.println("Problem list cleared");
+        problemListChosenTxt.setText("No Problem List Chosen");
     }
 }

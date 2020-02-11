@@ -1,4 +1,4 @@
-package com.lingfeishengtian.gui;
+package com.lingfeishengtian.gui.utils;
 
 import javafx.scene.control.TextArea;
 

@@ -2,18 +2,15 @@ package com.lingfeishengtian.core;
 
 import com.lingfeishengtian.utils.ProfileUtils;
 import edu.csus.ecs.pc2.core.InternalController;
+import edu.csus.ecs.pc2.core.list.AccountComparator;
 import edu.csus.ecs.pc2.core.log.Log;
 import edu.csus.ecs.pc2.core.log.StaticLog;
 import edu.csus.ecs.pc2.core.model.*;
 import edu.csus.ecs.pc2.core.security.FileSecurityException;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Properties;
-import java.util.Scanner;
-import java.util.Vector;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 
 public class ContestInstance {
     private InternalController controller;
@@ -266,6 +263,53 @@ public class ContestInstance {
             if (x.getName().endsWith(".dat") || x.getName().endsWith(".in")) infile = x;
             else if (x.getName().endsWith(".out")) outfile = x;
         }
+    }
+
+    public void setGeneratedPasswords(File file) throws Exception {
+        String[] lines;
+        try {
+            lines = loadFile(file.getAbsolutePath());
+        } catch (IOException iOException) {
+            throw new FileNotFoundException(file.getAbsolutePath());
+        }
+        if (lines.length < 1)
+            throw new FileNotFoundException(file.getAbsolutePath());
+        int numberOfPasswords = lines.length;
+        Vector<Account> accounts = contest.getAccounts(ClientType.Type.TEAM, contest.getSiteNumber());
+        int numberOfTeams = accounts.size();
+        if (numberOfPasswords > numberOfTeams)
+            throw new Exception("Too few accounts, expecting " + numberOfPasswords + " accounts, found " + numberOfTeams);
+        Account[] teams = accounts.toArray(new Account[accounts.size()]);
+        Arrays.sort(teams, new AccountComparator());
+        ArrayList<Account> accountList = new ArrayList<>();
+        for (int i = 0; i < lines.length; i++) {
+            teams[i].setPassword(lines[i]);
+            accountList.add(teams[i]);
+        }
+        Account[] changedAccounts = accountList.toArray(new Account[accountList.size()]);
+        controller.updateAccounts(changedAccounts);
+    }
+
+    private String[] loadFile(String filename) throws IOException {
+        Vector<String> lines = new Vector<>();
+        if (filename == null)
+            throw new IllegalArgumentException("filename is null");
+        if (!(new File(filename)).exists())
+            return new String[0];
+        BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(filename), StandardCharsets.UTF_8));
+        String line = in.readLine();
+        while (line != null) {
+            lines.addElement(line);
+            line = in.readLine();
+        }
+        in.close();
+        in = null;
+        if (lines.size() == 0)
+            return new String[0];
+        String[] out = new String[lines.size()];
+        for (int i = 0; i < lines.size(); i++)
+            out[i] = lines.elementAt(i);
+        return out;
     }
 
     public void test() {

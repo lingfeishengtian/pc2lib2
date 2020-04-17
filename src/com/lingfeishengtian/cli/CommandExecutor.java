@@ -8,41 +8,9 @@ import edu.csus.ecs.pc2.core.model.ClientType;
 import edu.csus.ecs.pc2.core.security.FileSecurityException;
 
 import java.io.*;
-import java.util.HashMap;
 
 public class CommandExecutor {
     ContestInstance contest;
-    public static HashMap<language, HashMap<String, String>> translations = new HashMap<>();
-    private language lang = language.en;
-
-    public CommandExecutor() {
-        HashMap<String, String> chinese = new HashMap<>();
-        chinese.put("助", "help");
-        chinese.put("运行", "run");
-        chinese.put("加载", "load");
-        chinese.put("新", "new");
-        chinese.put("加", "add");
-        chinese.put("账号", "account");
-        chinese.put("题目", "problem");
-        chinese.put("自动判断", "autoJudge");
-        chinese.put("设分", "setDefaultTime");
-        chinese.put("设时", "setDefaultScore");
-        chinese.put("自设赛", "setDefaultContest");
-        chinese.put("清理", "clean");
-        chinese.put("存", "save");
-        chinese.put("退", "exit");
-        chinese.put("现实", "display");
-        chinese.put("设语", "setLang");
-
-        translations.put(language.cn, chinese);
-    }
-
-    private void translate(String[] args) {
-        for (int i = 0; i < args.length; i++) {
-            String translated = translations.get(lang).get(args[i]);
-            if (translated != null) args[i] = translated;
-        }
-    }
 
     public static void addProperty(ContestInstance contest, String[] args) {
         String property = args[1];
@@ -77,9 +45,6 @@ public class CommandExecutor {
     }
 
     public void execute(String[] args, boolean fromFile) throws FileSecurityException {
-        if (lang != language.en) {
-            translate(args);
-        }
         String command = args[0];
         if (command.startsWith("#")) return;
         if (command.equals("help")) {
@@ -101,6 +66,7 @@ public class CommandExecutor {
             System.out.println("setDefaultTime: sets contest to 2 hours.");
             System.out.println("setDefaultScore : sets scores");
             System.out.println("setDefaultContest : Does all the default contest setup for you!");
+            System.out.println("setNewPasscodes <file with passwords>");
             System.out.println("clean : Removes unnecessary backups.");
             System.out.println("save : Saves changes made");
             System.out.println("exit : Exists the script");
@@ -164,11 +130,7 @@ public class CommandExecutor {
                 }
             executeCommand(new String[]{"load", dir.getAbsolutePath() + File.separator + "pc2-9.6.0" + File.separator + "bin", args[2]});
         } else if (command.equals("setLang")) {
-            try {
-                lang = language.valueOf(args[1]);
-            } catch (IllegalArgumentException e) {
-                System.out.println("Not a language available!");
-            }
+            System.out.println("Not supported.");
         } else {
             try {
                 if (contest != null) {
@@ -191,6 +153,8 @@ public class CommandExecutor {
                         contest.setDefaultScoring();
                         contest.setContestAutoJudges();
                         System.out.println("Default values set!");
+                    } else if (command.equals("setNewPasscodes")) {
+                        contest.setGeneratedPasswords(new File(args[1]));
                     }
                 } else {
                     System.out.println(command + " is either an invalid command or your contest has not been loaded yet!");

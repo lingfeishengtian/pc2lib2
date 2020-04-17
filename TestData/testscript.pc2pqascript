@@ -1,5 +1,12 @@
 # Setup Dulles competition script!
-new /Users/hunterhan/Desktop/PC2PQA_WithCustomScripts/PP/ chscompsci
-add problem /Users/hunterhan/Downloads/DHSCOMP20-master/_HANDSON/packet4/judgesdata /Users/hunterhan/Downloads/DHSCOMP20-master/_HANDSON/packet4/problemList.txt
+new /Users/hunterhan/tomcat/webapps/ROOT theamazingsecuremima
+add problem /Users/hunterhan/Desktop/TravisCompetitionDataFiles /Users/hunterhan/Desktop/TravisCompetitionDataFiles/problemlistTravis.txt
 setDefaultContest
+setNewPasscodes /Users/hunterhan/Desktop/passwords.txt
+save
+
+new /Users/hunterhan/tomcat/webapps/ROOT/DryRun/ theamazingsecuremima
+add problem DryRun /Users/hunterhan/Desktop/TravisCompetitionDataFiles/dryrun.dat /Users/hunterhan/Desktop/TravisCompetitionDataFiles/dryrun.out
+setDefaultContest
+setNewPasscodes /Users/hunterhan/Desktop/passwords.txt
 save

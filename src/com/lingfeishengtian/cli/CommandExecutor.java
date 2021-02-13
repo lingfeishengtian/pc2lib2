@@ -103,12 +103,15 @@ public class CommandExecutor {
             File fileLoc = new File(args[1]);
             if (fileLoc.exists()) {
                 String filePath = fileLoc.getAbsolutePath();
-                if (filePath.endsWith("/"))
+                if (filePath.endsWith(File.separator))
                     filePath = filePath.substring(0, filePath.length() - 1);
+                System.out.println("test");
                 contest = new ContestInstance(filePath, true, args[2]);
+                System.out.println("test");
                 try {
                     contest.startDataViewing();
                 } catch (FileSecurityException e) {
+                    System.out.println("File security error.");
                     throw e;
                 } catch (Exception e) {
                     System.out.println("Weird unexpected error while loading the competition.");

@@ -7,7 +7,7 @@
             xmlns="http://javafx.com/javafx/11.0.1" fx:controller="com.lingfeishengtian.gui.GUIStarter">
     <children>
         <TextArea fx:id="contestLog" editable="false" layoutX="7.0" layoutY="7.0" prefHeight="189.0" prefWidth="626.0"
-                  text="欢迎来到PC2PQA&#10;请您先加载新比赛文件柜或创新比赛文件柜&#10;&#10;如果你读不懂中文，我只能笑呵呵呵呵呵&#10;&#10;Started Log"
+                  text="Started Log"
                   wrapText="true">
             <font>
                 <Font name="Monospaced Regular" size="13.0"/>

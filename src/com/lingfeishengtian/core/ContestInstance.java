@@ -11,6 +11,7 @@ import edu.csus.ecs.pc2.core.security.FileSecurityException;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.security.SecureRandom;
 
 public class ContestInstance {
     private InternalController controller;
@@ -67,7 +68,7 @@ public class ContestInstance {
     public void saveContest() {
         try {
             String profPath = contest.getProfile().getProfilePath().replace(pathToBin, "");
-            if (profPath.startsWith("/")) profPath = profPath.substring(1);
+            if (profPath.startsWith(File.separator)) profPath = profPath.substring(1);
             contest.getProfile().setProfilePath(profPath);
             contest.storeConfiguration(mainLog);
         } catch (IOException e) {
@@ -158,6 +159,7 @@ public class ContestInstance {
         checkAndGenerate(ClientType.Type.JUDGE);
         checkAndGenerate(ClientType.Type.TEAM);
         checkAndGenerate(ClientType.Type.SCOREBOARD);
+        setAllRandomPasswords();
     }
 
     public void generateSingleAccount(ClientType.Type type) {
@@ -284,6 +286,43 @@ public class ContestInstance {
         ArrayList<Account> accountList = new ArrayList<>();
         for (int i = 0; i < lines.length; i++) {
             teams[i].setPassword(lines[i]);
+            accountList.add(teams[i]);
+        }
+        Account[] changedAccounts = accountList.toArray(new Account[accountList.size()]);
+
+        for(int i = 0; i < changedAccounts.length; i++){
+            System.out.println(changedAccounts[i].getDisplayName() + ": " + changedAccounts[i].getPassword());
+        }
+
+        controller.updateAccounts(changedAccounts);
+    }
+
+    private String genPassword(int length) {
+        // ASCII range - alphanumeric (0-9, a-z, A-Z)
+        final String chars = "GV9Jm2u7rmsCe65wKzPTw5jtS38n2tVEGiijklmnopqrstuvwxyz0123456789";
+
+        SecureRandom random = new SecureRandom();
+        StringBuilder sb = new StringBuilder();
+
+        // each iteration of loop choose a character randomly from the given ASCII range
+        // and append it to StringBuilder instance
+
+        for (int i = 0; i < length; i++) {
+            int randomIndex = random.nextInt(chars.length());
+            sb.append(chars.charAt(randomIndex));
+        }
+
+        return sb.toString();
+    }
+
+    private void setAllRandomPasswords() {
+        Vector<Account> accounts = contest.getAccounts(ClientType.Type.TEAM, contest.getSiteNumber());
+        int numberOfTeams = accounts.size();
+        Account[] teams = accounts.toArray(new Account[accounts.size()]);
+        Arrays.sort(teams, new AccountComparator());
+        ArrayList<Account> accountList = new ArrayList<>();
+        for (int i = 0; i < numberOfTeams; i++) {
+            teams[i].setPassword(genPassword(8));
             accountList.add(teams[i]);
         }
         Account[] changedAccounts = accountList.toArray(new Account[accountList.size()]);

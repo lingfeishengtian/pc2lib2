@@ -173,11 +173,12 @@ public class GUIStarter extends Application {
             if (!password.isPresent()) {
                 System.out.println("No password entered!");
                 return;
-            } else if (password.toString().length() <= 1) {
+            } else if (password.orElse("").length() <= 1) {
                 System.out.println("Password too short!");
                 return;
             }
             try {
+                System.out.println(password.toString());
                 executor.execute(new String[]{"new", chosen.getAbsolutePath(), password.orElse("")}, true);
                 System.out.println("Success!");
                 contestStatusTxt.setText("Loaded " + chosen.getAbsolutePath());

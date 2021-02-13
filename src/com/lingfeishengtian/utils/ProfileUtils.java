@@ -15,12 +15,13 @@ public class ProfileUtils {
 
     public ProfileUtils(String binPath, boolean shouldSearchForProfileProp, String profilePasscode, InternalController controller, InternalContest contest){
         manager = new ProfileManager();
-        File profilesPropertiesFile = new File(binPath + File.separator + "profiles.properties");
+        File profilesPropertiesFile = new File(binPath + File.separator + "profiles.properties"); //binPath + File.separator +
         if(profilesPropertiesFile.exists() && shouldSearchForProfileProp){
             try {
                 currentProfile = manager.getDefaultProfile(profilesPropertiesFile.getAbsolutePath());
-                if(currentProfile.getProfilePath().startsWith("profiles/"))
-                    currentProfile.setProfilePath(binPath + File.separator + currentProfile.getProfilePath());
+                System.out.println(currentProfile.getProfilePath());
+                if(currentProfile.getProfilePath().startsWith("profiles" + File.separator))
+                    currentProfile.setProfilePath(currentProfile.getProfilePath());
             }catch (IOException e){
                 System.out.println("Something's wrong with your profile path.");
                 System.exit(4);
@@ -34,16 +35,16 @@ public class ProfileUtils {
         }else{
             currentProfile = ProfileManager.createNewProfile();
             currentProfile.setActive(true);
-            try {
-                manager.storeDefaultProfile(binPath + File.separator + ProfileManager.PROFILE_INDEX_FILENAME, currentProfile);
-            } catch (IOException e){
-                System.out.println("There was an error while saving a new profile!");
-            }
-            currentProfile.setProfilePath(binPath + File.separator + currentProfile.getProfilePath());
+            currentProfile.setProfilePath(binPath + File.separator + currentProfile.getProfilePath()); //binPath + File.separator +
             try {
                 manager.createProfilesPathandFiles(currentProfile, 1, profilePasscode);
             }catch (Exception e){
                 e.printStackTrace();
+            }
+            try {
+                manager.storeDefaultProfile(binPath + File.separator + ProfileManager.PROFILE_INDEX_FILENAME, currentProfile); //binPath + File.separator +
+            } catch (IOException e){
+                System.out.println("There was an error while saving a new profile!");
             }
 
             LanguageManager manager = new LanguageManager(contest, controller);

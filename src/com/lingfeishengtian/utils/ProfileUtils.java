@@ -20,8 +20,6 @@ public class ProfileUtils {
             try {
                 currentProfile = manager.getDefaultProfile(profilesPropertiesFile.getAbsolutePath());
                 System.out.println(currentProfile.getProfilePath());
-                if(currentProfile.getProfilePath().startsWith("profiles" + File.separator))
-                    currentProfile.setProfilePath(currentProfile.getProfilePath());
             }catch (IOException e){
                 System.out.println("Something's wrong with your profile path.");
                 System.exit(4);
@@ -35,6 +33,7 @@ public class ProfileUtils {
         }else{
             currentProfile = ProfileManager.createNewProfile();
             currentProfile.setActive(true);
+            String path = currentProfile.getProfilePath();
             currentProfile.setProfilePath(binPath + File.separator + currentProfile.getProfilePath()); //binPath + File.separator +
             try {
                 manager.createProfilesPathandFiles(currentProfile, 1, profilePasscode);
@@ -42,7 +41,8 @@ public class ProfileUtils {
                 e.printStackTrace();
             }
             try {
-                manager.storeDefaultProfile(binPath + File.separator + ProfileManager.PROFILE_INDEX_FILENAME, currentProfile); //binPath + File.separator +
+                currentProfile.setProfilePath(path);
+                manager.store(binPath + File.separator + ProfileManager.PROFILE_INDEX_FILENAME, new Profile[]{currentProfile}, currentProfile); //binPath + File.separator +
             } catch (IOException e){
                 System.out.println("There was an error while saving a new profile!");
             }

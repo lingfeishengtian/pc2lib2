@@ -53,9 +53,11 @@ public class ContestInstance {
         contest.setClientId(new ClientId(1, ClientType.Type.SERVER, 0));
 
         profileUtils = new ProfileUtils(binPath, useExistingProfileFromProfilesProperties, contestPasscode, controller, contest);
-
-        contest.setProfile(profileUtils.getCurrentProfile());
-        controller.setTheProfile(profileUtils.getCurrentProfile());
+        
+        Profile f = profileUtils.getCurrentProfile();
+        f.setProfilePath(binPath + File.separator + f.getProfilePath());
+        contest.setProfile(f);
+        controller.setTheProfile(f);
     }
 
     /**
@@ -67,9 +69,9 @@ public class ContestInstance {
 
     public void saveContest() {
         try {
-            String profPath = contest.getProfile().getProfilePath().replace(pathToBin, "");
-            if (profPath.startsWith(File.separator)) profPath = profPath.substring(1);
-            contest.getProfile().setProfilePath(profPath);
+            // String profPath = contest.getProfile().getProfilePath().replace(pathToBin, "");
+            // if (profPath.startsWith(File.separator)) profPath = profPath.substring(1);
+            // contest.getProfile().setProfilePath(profPath);
             contest.storeConfiguration(mainLog);
         } catch (IOException e) {
             System.out.println("File pathing issues!");
@@ -322,7 +324,9 @@ public class ContestInstance {
         Arrays.sort(teams, new AccountComparator());
         ArrayList<Account> accountList = new ArrayList<>();
         for (int i = 0; i < numberOfTeams; i++) {
-            teams[i].setPassword(genPassword(8));
+            String pass = genPassword(8);
+            System.out.println("team" + i + ": " + pass);
+            teams[i].setPassword(pass);
             accountList.add(teams[i]);
         }
         Account[] changedAccounts = accountList.toArray(new Account[accountList.size()]);

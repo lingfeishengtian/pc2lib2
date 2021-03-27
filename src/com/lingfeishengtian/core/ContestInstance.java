@@ -25,6 +25,8 @@ public class ContestInstance {
     public int DEFAULT_JUDGES = 5;
     public int DEFAULT_SCOREBOARDS = 1;
 
+    private String pPath;
+
     /**
      * Initializes contest instance and stores the competition data.
      * <p>
@@ -35,6 +37,7 @@ public class ContestInstance {
      * @param useExistingProfileFromProfilesProperties
      * @param contestPasscode
      */
+
     public ContestInstance(String binPath, boolean useExistingProfileFromProfilesProperties, String contestPasscode) {
         contest = new InternalContest();
         contest.setContestPassword(contestPasscode);
@@ -55,6 +58,7 @@ public class ContestInstance {
         profileUtils = new ProfileUtils(binPath, useExistingProfileFromProfilesProperties, contestPasscode, controller, contest);
         
         Profile f = profileUtils.getCurrentProfile();
+        pPath = f.getProfilePath();
         f.setProfilePath(binPath + File.separator + f.getProfilePath());
         contest.setProfile(f);
         controller.setTheProfile(f);
@@ -72,7 +76,15 @@ public class ContestInstance {
             // String profPath = contest.getProfile().getProfilePath().replace(pathToBin, "");
             // if (profPath.startsWith(File.separator)) profPath = profPath.substring(1);
             // contest.getProfile().setProfilePath(profPath);
+            Profile f = contest.getProfile();
+            f.setProfilePath(pPath);
+
+            contest.setProfile(f);
+            controller.setTheProfile(f);
+            
             contest.storeConfiguration(mainLog);
+            
+            f.setProfilePath(pathToBin + File.separator + f.getProfilePath());
         } catch (IOException e) {
             System.out.println("File pathing issues!");
             System.exit(4);

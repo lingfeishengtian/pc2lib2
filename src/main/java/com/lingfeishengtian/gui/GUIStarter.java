@@ -47,7 +47,7 @@ public class GUIStarter extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException {
-        Parent root = FXMLLoader.load(getClass().getResource("GUIStarter.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("/GUIStarter.fxml"));
         Scene scene = new Scene(root);
 
         primaryStage.setScene(scene);

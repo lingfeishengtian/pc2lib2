@@ -196,7 +196,7 @@ public class GUIStarter extends Application {
     @FXML
     public void openScriptEditor(ActionEvent actionEvent) {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("script/ScriptEditor.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/ScriptEditor.fxml"));
             Parent root1 = fxmlLoader.load();
             Stage stage = new Stage();
             stage.setScene(new Scene(root1));

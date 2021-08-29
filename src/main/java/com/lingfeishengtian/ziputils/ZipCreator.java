@@ -4,13 +4,15 @@ import java.io.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import com.lingfeishengtian.gui.GUIStarter;
+
 public class ZipCreator {
     private static final int BUFFER_SIZE = 4096;
 
     public static void unzipTo(String fileLoc) throws IOException {
         File destination = new File(fileLoc);
         if (destination.isDirectory()) {
-            unzip("resources/pc2-9.6.0_server.zip", destination.getAbsolutePath());
+            unzip("/pc2-9.6.0_server.zip", destination.getAbsolutePath());
         } else {
             System.out.println("Path provided is not a directory and cannot be unzipped to.");
         }
@@ -21,7 +23,8 @@ public class ZipCreator {
         if (!destDir.exists()) {
             destDir.mkdir();
         }
-        ZipInputStream zipIn = new ZipInputStream(new FileInputStream(zipFilePath));
+        System.out.println("P"+GUIStarter.class.getResource(zipFilePath));
+        ZipInputStream zipIn = new ZipInputStream(GUIStarter.class.getResourceAsStream(zipFilePath));
         ZipEntry entry = zipIn.getNextEntry();
         while (entry != null) {
             String filePath = destDirectory + File.separator + entry.getName();

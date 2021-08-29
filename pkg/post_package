@@ -1,0 +1,5 @@
+mkdir pc2lib2
+cp start_pc2lib2 pc2lib2
+cp start_pc2lib2.bat pc2lib2
+cp ../target/pc2lib2-1.0-SNAPSHOT.jar pc2lib2/pc2lib2.jar
+zip -r pc2lib2.zip pc2lib2

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Text?>
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="423.0" prefWidth="602.0"
+            xmlns="http://javafx.com/javafx/11.0.1" fx:controller="com.lingfeishengtian.gui.script.ScriptEditor">
+    <children>
+        <TextArea fx:id="editor" layoutX="15.0" layoutY="14.0" prefHeight="297.0" prefWidth="573.0"
+                  promptText="Enter your code here."/>
+        <Button layoutX="161.0" layoutY="373.0" mnemonicParsing="false" onAction="#runScriptFromFile"
+                text="Run Script from File"/>
+        <Button layoutX="309.0" layoutY="373.0" mnemonicParsing="false" onAction="#runScriptFromEditor"
+                text="Run Script"/>
+        <Text layoutX="15.0" layoutY="338.0" strokeType="OUTSIDE" strokeWidth="0.0"
+              text="The file chosen must be of extension .pc2pqa. Check log on the main window for messages. Remember that contests loaded in the main window will not affect your script!"
+              wrappingWidth="573.0"/>
+    </children>
+</AnchorPane>

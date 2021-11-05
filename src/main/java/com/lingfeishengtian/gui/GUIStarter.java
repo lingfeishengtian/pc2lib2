@@ -221,7 +221,8 @@ public class GUIStarter extends Application {
         File chosen = getUserChosenDirectory(actionEvent, "Choose Directory With inouts");
         if (chosen.exists()) {
             if (problemList == null) {
-                executor.executeCommand(new String[]{"add", "problem", chosen.getAbsolutePath()});
+                System.out.println("No problem list selected!");
+                //executor.executeCommand(new String[]{"add", "problem", chosen.getAbsolutePath()});
             } else {
                 executor.executeCommand(new String[]{"add", "problem", chosen.getAbsolutePath(), problemList.getAbsolutePath()});
             }

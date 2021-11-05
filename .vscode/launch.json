@@ -29,7 +29,8 @@
             "name": "Launch Main",
             "request": "launch",
             "mainClass": "com.lingfeishengtian.Main",
-            "projectName": "pc2lib2"
+            "projectName": "pc2lib2",
+            "vmArgs": "-Djdk.crypto.KeyAgreement.legacyKDF=true"
         },
         {
             "type": "java",
@@ -43,7 +44,7 @@
             "name": "Launch GUIStarter",
             "request": "launch",
             "mainClass": "com.lingfeishengtian.gui.GUIStarter",
-            "projectName": "pc2lib2"
+            "projectName": "pc2lib2",
         }
     ]
 }

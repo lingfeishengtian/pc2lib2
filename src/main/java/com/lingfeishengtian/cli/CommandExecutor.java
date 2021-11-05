@@ -22,21 +22,24 @@ public class CommandExecutor {
                 System.out.println("Argument entered <type> is not valid.");
             }
         } else if (property.equals("problem")) {
-            if (args.length == 5) {
-                String dispName = args[2];
-                File inFile = new File(args[3]);
-                if (args[3].equals("null")) inFile = null;
-                File outFile = new File(args[4]);
-                try {
-                    contest.addProblem(new DefaultProblem(dispName, inFile, outFile));
-                } catch (Exception e) {
-                    System.out.println("This is weird, for some reason, out file is null?");
-                }
-            } else if (args.length == 4) {
+            // if (args.length == 5) {
+            //     String dispName = args[2];
+            //     File inFolder = new File(args[3]);
+            //     if (args[3].equals("null")) inFolder = null;
+            //     File outFolder = new File(args[4]);
+            //     try {
+            //         contest.addProblem(new DefaultProblem(dispName, ));
+            //     } catch (Exception e) {
+            //         System.out.println("This is weird, for some reason, out file is null?");
+            //     }
+            // } 
+            // else 
+            if (args.length == 4) {
                 contest.bulkAddProblems(new File(args[2]), new File(args[3]));
             } else if (args.length == 3) {
                 contest.bulkAddProblems(new File(args[2]));
-            } else {
+            } 
+            else {
                 System.out.println("Too many or not enough arguments.");
             }
         } else {

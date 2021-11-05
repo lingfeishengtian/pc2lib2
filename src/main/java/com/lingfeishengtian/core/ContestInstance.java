@@ -220,42 +220,45 @@ public class ContestInstance {
         return newString;
     }
 
-    public void bulkAddProblems(File inoutdir, File problemList) {
-        HashMap<String, InOutPair> pairs = new HashMap<>();
-
-        for (File pair : inoutdir.listFiles()) {
-            String name = parseName(pair.getName());
-            if (!pair.getName().contains(" ") && (pair.getName().contains(".in") || pair.getName().contains(".out") || pair.getName().contains(".dat"))) {
-                InOutPair tmp = pairs.get(name);
-                if (tmp == null) pairs.put(name, new InOutPair());
-                pairs.get(name).put(pair);
-            } else {
-                System.out.println("Invalid in out directory file " + pair.getAbsolutePath());
+    private File getProblemTestCaseFolder(File testCases, String folderName) {
+        File[] files = testCases.listFiles();
+        for (File f : files) {
+            if (f.getName().equals(folderName)) {
+                return f;
             }
         }
+        return null;
+    }
+
+    //TODO: Work on bulk add problems for single inout problems
+    public void bulkAddProblems(File testCases, File problemList) {
+        // HashMap<String, InOutPair> pairs = new HashMap<>();
+
+        // for (File pair : inoutdir.listFiles()) {
+        //     String name = parseName(pair.getName());
+        //     if (!pair.getName().contains(" ") && (pair.getName().contains(".in") || pair.getName().contains(".out") || pair.getName().contains(".dat"))) {
+        //         InOutPair tmp = pairs.get(name);
+        //         if (tmp == null) pairs.put(name, new InOutPair());
+        //         pairs.get(name).put(pair);
+        //     } else {
+        //         System.out.println("Invalid in out directory file " + pair.getAbsolutePath());
+        //     }
+        // }
 
         try {
             Scanner scan = null;
             if (problemList != null)
                 scan = new Scanner(problemList);
 
-            if (inoutdir != null) {
+            if (testCases != null) {
                 DefaultProblem problem;
                 if (scan != null)
                     while (scan.hasNext()) {
+                        String folderName = scan.nextLine().trim();
                         String name = scan.nextLine().trim();
-                        InOutPair pair = pairs.get(name);
-                        problem = new DefaultProblem(name, pair.infile, pair.outfile);
+                        problem = new DefaultProblem(name, getProblemTestCaseFolder(testCases, folderName));
                         addProblem(problem);
                     }
-                else
-                    pairs.forEach((String name, InOutPair pair) -> {
-                        try {
-                            addProblem(new DefaultProblem(name, pair.infile, pair.outfile));
-                        } catch (ProblemException e) {
-                            System.out.println("Problem definition error of " + name);
-                        }
-                    });
             } else {
                 System.out.println("Your inout directory does not exist.");
             }

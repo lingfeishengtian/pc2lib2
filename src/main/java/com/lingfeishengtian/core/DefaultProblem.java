@@ -5,18 +5,51 @@ import edu.csus.ecs.pc2.core.model.ProblemDataFiles;
 import edu.csus.ecs.pc2.core.model.SerializedFile;
 import edu.csus.ecs.pc2.validator.pc2Validator.PC2ValidatorSettings;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-
 public class DefaultProblem {
     private Problem problem;
-    private String problemName;
-    private File testCases;
+    private String testCaseName;
+    private SerializedFile[] inSerializedFiles, outSerializedFiles;
+    private String inExtensions, outExtensions;
 
-    public DefaultProblem(String name, File testCases) throws ProblemException {
-        this.testCases = testCases;
-        this.problemName = name;
+    private boolean isArrayNull(SerializedFile[] files) throws ProblemException{
+        if (files != null) {
+            boolean isNull = files[0] == null;
+            for (SerializedFile serializedFile : files) {
+                if((serializedFile == null) != isNull) {
+                    throw new ProblemException("Input Mismatch");
+                }
+            }
+            return isNull;
+        }
+        return true;
+    }
+
+    public DefaultProblem(String name, String testCaseName, SerializedFile[] serializedIn,
+            SerializedFile[] serializedOut) throws ProblemException {
+        this.inSerializedFiles = serializedIn;
+        this.outSerializedFiles = serializedOut;
+        if (serializedOut == null || serializedOut.length == 0) 
+            throw new ProblemException("There must be out files.");
+        if (serializedIn != null && serializedIn.length != serializedOut.length)
+            throw new ProblemException("In files length must be the same as out file length.");
+        String tmpExceptions;
+        if (serializedIn != null && serializedIn.length > 0 && !isArrayNull(serializedIn)) {
+            tmpExceptions = serializedIn[0].getAbsolutePath()
+                    .substring(serializedIn[0].getAbsolutePath().lastIndexOf("."));
+            for (SerializedFile file : serializedIn) {
+                if (!tmpExceptions.equals(file.getAbsolutePath().substring(file.getAbsolutePath().lastIndexOf("."))))
+                    throw new ProblemException("Input file extensions are different.");
+            }
+            this.inExtensions = tmpExceptions;
+        }
+        tmpExceptions = serializedOut[0].getAbsolutePath()
+                .substring(serializedOut[0].getAbsolutePath().lastIndexOf("."));
+        for (SerializedFile file : serializedOut) {
+            if (!tmpExceptions.equals(file.getAbsolutePath().substring(file.getAbsolutePath().lastIndexOf("."))))
+                throw new ProblemException("Output file extensions are different.");
+        }
+        this.outExtensions = tmpExceptions;
+        this.testCaseName = testCaseName;
 
         problem = new Problem(name);
         problem.setComputerJudged(true);
@@ -27,74 +60,56 @@ public class DefaultProblem {
         problem.setShowCompareWindow(true);
         problem.setShowValidationToJudges(true);
         problem.setManualReview(true);
-        problem.setShortName(parseProblemName());
+        problem.setShortName(testCaseName);
         setDataFiles();
     }
 
+    public DefaultProblem(String name, SerializedFile[] serializedIn, SerializedFile[] serializedOut)
+            throws ProblemException {
+        this(name, name.replaceAll("[^a-zA-Z]+", "").replaceAll(" ", "").toLowerCase(), serializedIn, serializedOut);
+    }
+
     private boolean hasInputCases() {
-        for (File file : testCases.listFiles()) {
-            if (file.getName().endsWith(".in") || file.getName().endsWith(".dat")) {
-                return true;
-            }
-        }
-        return false;
+        if (inSerializedFiles == null || inSerializedFiles.length == 0 || inExtensions == null)
+            return false;
+        else
+            return true;
     }
 
     public void setDataFiles() throws ProblemException {
-        if(testCases == null){
+        if (outSerializedFiles == null) {
             throw new ProblemException("Your out folder cannot be null.");
         }
-        if(hasInputCases()){
-            problem.setDataFileName(1 + ".in");
+        if (hasInputCases()) {
+            problem.setDataFileName(testCaseName + inExtensions);
         }
-        problem.setAnswerFileName(1 + ".out");
-    }
-
-    public String parseProblemName() {
-        return problemName.replaceAll("/[^A-Z0-9]+/ig", "_");
-    }
-
-    private int getLargestTestCaseNumber() {
-        int largest = 0;
-        for (File file : testCases.listFiles()) {
-            if (file.getName().endsWith(".out")) {
-                String name = file.getName();
-                String number = name.substring(0, name.indexOf("."));
-                int num = Integer.parseInt(number);
-                if (num > largest) {
-                    largest = num;
-                }
-            }
-        }
-        return largest;
+        problem.setAnswerFileName(testCaseName + outExtensions);
     }
 
     public ProblemDataFiles generateDataFiles() {
-        SerializedFile[] serializedInFiles = new SerializedFile[getLargestTestCaseNumber()];
-        SerializedFile[] serializedOutFiles = new SerializedFile[getLargestTestCaseNumber()];
         ProblemDataFiles dataFiles = new ProblemDataFiles(problem);
 
-        for (File file : testCases.listFiles()) {
-            String name = file.getName();
-            System.out.println(name);
-            if(name.endsWith("in") || name.endsWith("out")){
-                String number = name.substring(0, name.indexOf("."));
-                int num = Integer.parseInt(number);
-                if (file.getName().endsWith(".in")) {
-                    serializedInFiles[num - 1] = new SerializedFile(file.getAbsolutePath());
-                } else if (file.getName().endsWith(".out")) {
-                    serializedOutFiles[num - 1] = new SerializedFile(file.getAbsolutePath());
-                }
-            }
+        // for (File file : testCases.listFiles()) {
+        // String name = file.getName();
+        // System.out.println(name);
+        // if(name.endsWith("in") || name.endsWith("out")){
+        // String number = name.substring(0, name.lastIndexOf("."));
+        // int num = Integer.parseInt(number);
+        // if (file.getName().endsWith(".in")) {
+        // serializedInFiles[num - 1] = new SerializedFile(file.getAbsolutePath());
+        // } else if (file.getName().endsWith(".out")) {
+        // serializedOutFiles[num - 1] = new SerializedFile(file.getAbsolutePath());
+        // }
+        // }
+        // }
+
+        dataFiles.setJudgesAnswerFiles(outSerializedFiles);
+        if (hasInputCases()) {
+            dataFiles.setJudgesDataFiles(inSerializedFiles);
         }
 
-        dataFiles.setJudgesAnswerFiles(serializedOutFiles);
-        if(testCases != null){
-            dataFiles.setJudgesDataFiles(serializedInFiles);
-        }
-
-        for (int i = 0; i < serializedOutFiles.length; i++) {
-            problem.addTestCaseFilenames(serializedInFiles[i].getName(), serializedOutFiles[i].getName());
+        for (int i = 0; i < outSerializedFiles.length; i++) {
+            problem.addTestCaseFilenames(inSerializedFiles == null || inSerializedFiles[i] == null ? null : inSerializedFiles[i].getName(), outSerializedFiles[i].getName());
         }
         return dataFiles;
     }

@@ -30,8 +30,10 @@ public class ContestInstance {
     /**
      * Initializes contest instance and stores the competition data.
      * <p>
-     * If useExistingProfileFromProfilesProperties is true, then it'll attempt to search for the existing profiles. If one doesn't exist, it'll create a new one.
-     * If useExistingProfileFromProfilesProperties is false, then it'll always create a new profile.
+     * If useExistingProfileFromProfilesProperties is true, then it'll attempt to
+     * search for the existing profiles. If one doesn't exist, it'll create a new
+     * one. If useExistingProfileFromProfilesProperties is false, then it'll always
+     * create a new profile.
      *
      * @param binPath
      * @param useExistingProfileFromProfilesProperties
@@ -55,8 +57,9 @@ public class ContestInstance {
         controller.setContactingRemoteServer(false);
         contest.setClientId(new ClientId(1, ClientType.Type.SERVER, 0));
 
-        profileUtils = new ProfileUtils(binPath, useExistingProfileFromProfilesProperties, contestPasscode, controller, contest);
-        
+        profileUtils = new ProfileUtils(binPath, useExistingProfileFromProfilesProperties, contestPasscode, controller,
+                contest);
+
         Profile f = profileUtils.getCurrentProfile();
         pPath = f.getProfilePath();
         f.setProfilePath(binPath + File.separator + f.getProfilePath());
@@ -73,7 +76,8 @@ public class ContestInstance {
 
     public void saveContest() {
         try {
-            // String profPath = contest.getProfile().getProfilePath().replace(pathToBin, "");
+            // String profPath = contest.getProfile().getProfilePath().replace(pathToBin,
+            // "");
             // if (profPath.startsWith(File.separator)) profPath = profPath.substring(1);
             // contest.getProfile().setProfilePath(profPath);
             Profile f = contest.getProfile();
@@ -81,9 +85,9 @@ public class ContestInstance {
 
             contest.setProfile(f);
             controller.setTheProfile(f);
-            
+
             contest.storeConfiguration(mainLog);
-            
+
             f.setProfilePath(pathToBin + File.separator + f.getProfilePath());
         } catch (IOException e) {
             System.out.println("File pathing issues!");
@@ -99,7 +103,9 @@ public class ContestInstance {
      *
      * @param pointsForYes    How many points are given for a correct answer.
      * @param pointsForNo     How many points are counted off for a wrong answer.
-     * @param pointsPerMinute How many points are given for minutes after timer and problem solved. (Predicted I actually have no idea what this means)
+     * @param pointsPerMinute How many points are given for minutes after timer and
+     *                        problem solved. (Predicted I actually have no idea
+     *                        what this means)
      */
     public void setScoringProperties(int pointsForYes, int pointsForNo, int pointsPerMinute) {
         ContestInformation contestInformation = contest.getContestInformation();
@@ -133,13 +139,13 @@ public class ContestInstance {
         ClientSettings[] shouldAdd = new ClientSettings[0];
         Problem[] problems = contest.getProblems();
         for (Account acc : getAccountsOfType(ClientType.Type.JUDGE)) {
-//            int clientSettingsIndex = -1;
-//            for (int i = 0; i < clientSettingsExist.length; i++) {
-//                if (clientSettingsExist[i].getClientId().equals(acc.getClientId())) {
-//                    clientSettingsIndex = i;
-//                    break;
-//            }
-//            }
+            // int clientSettingsIndex = -1;
+            // for (int i = 0; i < clientSettingsExist.length; i++) {
+            // if (clientSettingsExist[i].getClientId().equals(acc.getClientId())) {
+            // clientSettingsIndex = i;
+            // break;
+            // }
+            // }
             ClientSettings c = new ClientSettings(acc.getClientId());
             c.setAutoJudging(true);
             Filter filter = c.getAutoJudgeFilter();
@@ -151,19 +157,18 @@ public class ContestInstance {
                 }
             }
 
-//            if(clientSettingsIndex == -1) {
+            // if(clientSettingsIndex == -1) {
             ClientSettings[] tmp = shouldAdd;
             shouldAdd = new ClientSettings[shouldAdd.length + 1];
             for (int i = 0; i < tmp.length; i++) {
                 shouldAdd[i] = tmp[i];
             }
             shouldAdd[tmp.length] = c;
-//            } else {
-//                clientSettingsExist[clientSettingsIndex] = c;
-//            }
+            // } else {
+            // clientSettingsExist[clientSettingsIndex] = c;
+            // }
         }
-        for (ClientSettings settings :
-                shouldAdd) {
+        for (ClientSettings settings : shouldAdd) {
             contest.addClientSettings(settings);
         }
     }
@@ -188,16 +193,16 @@ public class ContestInstance {
 
     private int getDefaultFrom(ClientType.Type type) {
         switch (type) {
-            case TEAM:
-                return DEFAULT_TEAMS;
-            case ADMINISTRATOR:
-                return DEFAULT_ADMINISTRATORS;
-            case JUDGE:
-                return DEFAULT_JUDGES;
-            case SCOREBOARD:
-                return DEFAULT_SCOREBOARDS;
-            default:
-                return 0;
+        case TEAM:
+            return DEFAULT_TEAMS;
+        case ADMINISTRATOR:
+            return DEFAULT_ADMINISTRATORS;
+        case JUDGE:
+            return DEFAULT_JUDGES;
+        case SCOREBOARD:
+            return DEFAULT_SCOREBOARDS;
+        default:
+            return 0;
         }
     }
 
@@ -215,54 +220,99 @@ public class ContestInstance {
         String[] splitName = name.split("_");
         String newString = "";
         for (int i = 0; i < splitName.length; i++) {
-            newString += (i == 0 ? "" : " ") + Character.toUpperCase(splitName[i].charAt(0)) + splitName[i].substring(1);
+            newString += (i == 0 ? "" : " ") + Character.toUpperCase(splitName[i].charAt(0))
+                    + splitName[i].substring(1);
         }
         return newString;
     }
 
-    private File getProblemTestCaseFolder(File testCases, String folderName) {
-        File[] files = testCases.listFiles();
+    private File[] getFilesWithName(File folder, String name) {
+        File[] files = folder.listFiles();
+        Vector<File> ret = new Vector<File>();
         for (File f : files) {
-            if (f.getName().equals(folderName)) {
-                return f;
+            if ((f.isDirectory() && f.getName().equals(name))
+                    || (f.isFile() && f.getName().substring(0, f.getName().lastIndexOf(".")).equals(name))) {
+                ret.add(f);
             }
         }
-        return null;
+        return ret.toArray(new File[0]);
     }
 
-    //TODO: Work on bulk add problems for single inout problems
+    private String getFileNameWithoutExtension(File f) {
+        return f.isDirectory() ? f.getName() : f.getName().substring(0, f.getName().lastIndexOf("."));
+    }
+
     public void bulkAddProblems(File testCases, File problemList) {
-        // HashMap<String, InOutPair> pairs = new HashMap<>();
-
-        // for (File pair : inoutdir.listFiles()) {
-        //     String name = parseName(pair.getName());
-        //     if (!pair.getName().contains(" ") && (pair.getName().contains(".in") || pair.getName().contains(".out") || pair.getName().contains(".dat"))) {
-        //         InOutPair tmp = pairs.get(name);
-        //         if (tmp == null) pairs.put(name, new InOutPair());
-        //         pairs.get(name).put(pair);
-        //     } else {
-        //         System.out.println("Invalid in out directory file " + pair.getAbsolutePath());
-        //     }
-        // }
-
+        if(problemList == null) {
+            System.out.println("No problem list.");
+            return;
+        }
         try {
-            Scanner scan = null;
-            if (problemList != null)
-                scan = new Scanner(problemList);
+            Scanner scan = new Scanner(problemList);
 
             if (testCases != null) {
                 DefaultProblem problem;
-                if (scan != null)
-                    while (scan.hasNext()) {
-                        String folderName = scan.nextLine().trim();
-                        String name = scan.nextLine().trim();
-                        problem = new DefaultProblem(name, getProblemTestCaseFolder(testCases, folderName));
-                        addProblem(problem);
+                while (scan.hasNext()) {
+                    String testCaseName = scan.nextLine().trim();
+                    String name = scan.nextLine().trim();
+
+                    File[] testCaseNameFiles = getFilesWithName(testCases, testCaseName);
+                    if (testCaseNameFiles == null) {
+                        System.out.println("No test case folder for " + testCaseName);
                     }
+                    //TODO: DUPLICATED CODE
+                    HashMap<String, InOutPair> testCaseFiles = new HashMap<String, InOutPair>();
+                    for (File f : testCaseNameFiles) {
+                        if (f.isDirectory()) {
+                            File[] inouts = f.listFiles();
+                            Arrays.sort(inouts);
+
+                            for(File inout : inouts){
+                                if(!inout.getName().startsWith(".")){
+                                    String inoutName = getFileNameWithoutExtension(inout);
+                                    if(testCaseFiles.get(inoutName) == null) {
+                                        testCaseFiles.put(inoutName, new InOutPair());
+                                        testCaseFiles.get(inoutName).put(inout);
+                                    }else{
+                                        testCaseFiles.get(inoutName).put(inout);
+                                    }
+                                }
+                            }
+                        }else{
+                            if(!f.getName().startsWith(".")){
+                                String inoutName = getFileNameWithoutExtension(f);
+                                if(testCaseFiles.get(inoutName) == null) {
+                                    testCaseFiles.put(inoutName, new InOutPair());
+                                    testCaseFiles.get(inoutName).put(f);
+                                } else
+                                    testCaseFiles.get(inoutName).put(f);
+                            }
+                        }
+                    }
+
+                    SerializedFile[] ins = new SerializedFile[testCaseFiles.size()];
+                    SerializedFile[] outs = new SerializedFile[testCaseFiles.size()];
+
+                    for (int i = 0; i < testCaseFiles.values().size(); i++) {
+                        InOutPair pair = testCaseFiles.values().toArray(new InOutPair[0])[i];
+                        ins[i] = pair.infile != null ? new SerializedFile(pair.infile.getAbsolutePath()) : null;
+                        outs[i] = pair.outfile != null ? new SerializedFile(pair.outfile.getAbsolutePath()) : null;
+                    }
+
+                    try {
+                        problem = new DefaultProblem(name, testCaseName, ins, outs);
+                        addProblem(problem);
+                    } catch (NullPointerException e) {
+                        e.printStackTrace();
+                        System.out.println("Mismatched input output files.\nYou are missing an output file or you don't have input values where there should be.");
+                    }
+                }
+                scan.close();
             } else {
                 System.out.println("Your inout directory does not exist.");
             }
         } catch (FileNotFoundException | ProblemException ex) {
+            ex.printStackTrace();
             System.out.println("Invalid file input.");
         }
     }
@@ -274,13 +324,11 @@ public class ContestInstance {
     private class InOutPair {
         public File infile, outfile;
 
-        public InOutPair() {
-
-        }
-
         public void put(File x) {
-            if (x.getName().endsWith(".dat") || x.getName().endsWith(".in")) infile = x;
-            else if (x.getName().endsWith(".out")) outfile = x;
+            if (x.getName().endsWith(".dat") || x.getName().endsWith(".in"))
+                infile = x;
+            else if (x.getName().endsWith(".out") || x.getName().endsWith(".ans"))
+                outfile = x;
         }
     }
 
@@ -297,7 +345,8 @@ public class ContestInstance {
         Vector<Account> accounts = contest.getAccounts(ClientType.Type.TEAM, contest.getSiteNumber());
         int numberOfTeams = accounts.size();
         if (numberOfPasswords > numberOfTeams)
-            throw new Exception("Too few accounts, expecting " + numberOfPasswords + " accounts, found " + numberOfTeams);
+            throw new Exception(
+                    "Too few accounts, expecting " + numberOfPasswords + " accounts, found " + numberOfTeams);
         Account[] teams = accounts.toArray(new Account[accounts.size()]);
         Arrays.sort(teams, new AccountComparator());
         ArrayList<Account> accountList = new ArrayList<>();
@@ -307,7 +356,7 @@ public class ContestInstance {
         }
         Account[] changedAccounts = accountList.toArray(new Account[accountList.size()]);
 
-        for(int i = 0; i < changedAccounts.length; i++){
+        for (int i = 0; i < changedAccounts.length; i++) {
             System.out.println(changedAccounts[i].getDisplayName() + ": " + changedAccounts[i].getPassword());
         }
 
@@ -340,7 +389,7 @@ public class ContestInstance {
         ArrayList<Account> accountList = new ArrayList<>();
         for (int i = 0; i < numberOfTeams; i++) {
             String pass = genPassword(8);
-            System.out.println("team" + (i+1) + ": " + pass);
+            System.out.println("team" + (i + 1) + ": " + pass);
             teams[i].setPassword(pass);
             accountList.add(teams[i]);
         }
@@ -354,7 +403,8 @@ public class ContestInstance {
             throw new IllegalArgumentException("filename is null");
         if (!(new File(filename)).exists())
             return new String[0];
-        BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(filename), StandardCharsets.UTF_8));
+        BufferedReader in = new BufferedReader(
+                new InputStreamReader(new FileInputStream(filename), StandardCharsets.UTF_8));
         String line = in.readLine();
         while (line != null) {
             lines.addElement(line);

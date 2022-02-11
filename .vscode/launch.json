@@ -37,7 +37,8 @@
             "name": "Launch CLIStarter",
             "request": "launch",
             "mainClass": "com.lingfeishengtian.cli.CLIStarter",
-            "projectName": "pc2lib2"
+            "projectName": "pc2lib2",
+            "vmArgs": "-Djdk.crypto.KeyAgreement.legacyKDF=true"
         },
         {
             "type": "java",

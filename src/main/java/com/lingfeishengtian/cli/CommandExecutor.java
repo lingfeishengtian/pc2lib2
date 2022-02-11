@@ -74,7 +74,6 @@ public class CommandExecutor {
             System.out.println("save : Saves changes made");
             System.out.println("exit : Exists the script");
             System.out.println("display <properties> : displays properties (WIP) ");
-            System.out.println("setLang <en, cn>");
             System.out.println("+==============================+");
             return;
         } else if (command.equals("exit")) {
@@ -108,9 +107,7 @@ public class CommandExecutor {
                 String filePath = fileLoc.getAbsolutePath();
                 if (filePath.endsWith(File.separator))
                     filePath = filePath.substring(0, filePath.length() - 1);
-                System.out.println("test");
                 contest = new ContestInstance(filePath, true, args[2]);
-                System.out.println("test");
                 try {
                     contest.startDataViewing();
                 } catch (FileSecurityException e) {

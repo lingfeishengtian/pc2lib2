@@ -387,9 +387,10 @@ public class ContestInstance {
         Account[] teams = accounts.toArray(new Account[accounts.size()]);
         Arrays.sort(teams, new AccountComparator());
         ArrayList<Account> accountList = new ArrayList<>();
+        System.out.println("Password List\n==========================");
         for (int i = 0; i < numberOfTeams; i++) {
             String pass = genPassword(8);
-            System.out.println("team" + (i + 1) + ": " + pass);
+            System.out.println(pass);
             teams[i].setPassword(pass);
             accountList.add(teams[i]);
         }

@@ -10,3 +10,15 @@ add problem DryRun /Users/hunterhan/Desktop/TravisCompetitionDataFiles/dryrun.da
 setDefaultContest
 setNewPasscodes /Users/hunterhan/Desktop/passwords.txt
 save
+
+new /Users/hunterhan/Downloads chscompsci
+add problem /Users/hunterhan/Downloads/dryruninput /Users/hunterhan/Downloads/dryruninput/list.txt
+setDefaultContest
+setNewPasscodes /Users/hunterhan/Desktop/passwords.txt
+save
+
+new /Users/hunterhan/Downloads chscompsci
+add problem /Users/hunterhan/Downloads/dryruninput /Users/hunterhan/Downloads/dryruninput/list.txt
+setDefaultContest
+setNewPasscodes /Users/hunterhan/Desktop/passwords.txt
+save

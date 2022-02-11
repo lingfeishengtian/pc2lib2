@@ -28,8 +28,10 @@ public class DefaultProblem {
             SerializedFile[] serializedOut) throws ProblemException {
         this.inSerializedFiles = serializedIn;
         this.outSerializedFiles = serializedOut;
-        if (serializedOut == null || serializedOut.length == 0) 
+        if (serializedOut == null || serializedOut.length == 0) {
+            System.out.println(name + " " + testCaseName);
             throw new ProblemException("There must be out files.");
+        }
         if (serializedIn != null && serializedIn.length != serializedOut.length)
             throw new ProblemException("In files length must be the same as out file length.");
         String tmpExceptions;

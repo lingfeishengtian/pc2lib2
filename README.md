@@ -1,9 +1,6 @@
-# pc2lib2: The PC² Jailbreak
-pc2lib remade.
+# pc2lib2: The PC² Assistant Tool
 
-pc2lib2 allows you to automatically create contests with one button. No need for even opening the administrator panel to setup!
-
-You can do things such as create contests from pc2 zip file, setup contests with a click of a button, add accounts easily, etc.
+A simple tool with convienience functions for PC².
 
 # Getting Started
 

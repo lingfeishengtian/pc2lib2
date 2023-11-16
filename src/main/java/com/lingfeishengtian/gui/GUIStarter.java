@@ -149,7 +149,7 @@ public class GUIStarter extends Application {
 
             boolean sameNameExists = false;
             for (File x : chosen.listFiles()) {
-                if (x.getName().equals("pc2-9.6.0")) {
+                if (x.getName().equals("pc2-9.8.0-6456")) {
                     sameNameExists = true;
                     break;
                 }

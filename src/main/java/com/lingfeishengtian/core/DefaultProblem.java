@@ -3,6 +3,7 @@ package com.lingfeishengtian.core;
 import edu.csus.ecs.pc2.core.model.Problem;
 import edu.csus.ecs.pc2.core.model.ProblemDataFiles;
 import edu.csus.ecs.pc2.core.model.SerializedFile;
+import edu.csus.ecs.pc2.core.model.Problem.INPUT_VALIDATOR_TYPE;
 import edu.csus.ecs.pc2.validator.pc2Validator.PC2ValidatorSettings;
 
 public class DefaultProblem {
@@ -56,6 +57,7 @@ public class DefaultProblem {
         problem = new Problem(name);
         problem.setComputerJudged(true);
         problem.setValidatorType(Problem.VALIDATOR_TYPE.PC2VALIDATOR);
+        problem.setCurrentInputValidatorType(INPUT_VALIDATOR_TYPE.NONE);
         PC2ValidatorSettings validatorSettings = new PC2ValidatorSettings();
         validatorSettings.setWhichPC2Validator(1);
         problem.setPC2ValidatorSettings(validatorSettings);

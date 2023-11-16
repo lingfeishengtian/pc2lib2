@@ -12,7 +12,7 @@ public class ZipCreator {
     public static void unzipTo(String fileLoc) throws IOException {
         File destination = new File(fileLoc);
         if (destination.isDirectory()) {
-            unzip("/pc2-9.6.0_server.zip", destination.getAbsolutePath());
+            unzip("/pc2-9.8.0-6456.zip", destination.getAbsolutePath());
         } else {
             System.out.println("Path provided is not a directory and cannot be unzipped to.");
         }

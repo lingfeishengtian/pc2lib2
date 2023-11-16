@@ -121,7 +121,7 @@ public class CommandExecutor {
             }
         } else if (command.equals("new")) {
             File dir = new File(args[1]);
-            File existing = (new File(dir.getAbsolutePath() + File.separator + "pc2-9.6.0"));
+            File existing = (new File(dir.getAbsolutePath() + File.separator + "pc2-9.8.0-6456"));
             if (existing.exists()) {
                 deleteDir(existing);
             }
@@ -131,7 +131,7 @@ public class CommandExecutor {
                 } catch (IOException e) {
                     System.out.println("There was an error while trying to unzip.");
                 }
-            executeCommand(new String[]{"load", dir.getAbsolutePath() + File.separator + "pc2-9.6.0" + File.separator + "bin", args[2]});
+            executeCommand(new String[]{"load", dir.getAbsolutePath() + File.separator + "pc2-9.8.0", args[2]});
         } else if (command.equals("setLang")) {
             System.out.println("Not supported.");
         } else {
@@ -145,7 +145,7 @@ public class CommandExecutor {
                     } else if (command.equals("autoJudge")) {
                         contest.setContestAutoJudges();
                     } else if (command.equals("clean")) {
-                        Cleaner.clean(contest.getPathToBin());
+                        Cleaner.clean(contest.getRootPath());
                     } else if (command.equals("setDefaultTime")) {
                         contest.setDefaultContestTime();
                     } else if (command.equals("setDefaultScore")) {

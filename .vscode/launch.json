@@ -46,6 +46,7 @@
             "request": "launch",
             "mainClass": "com.lingfeishengtian.gui.GUIStarter",
             "projectName": "pc2lib2",
+            "vmArgs": "-Djdk.crypto.KeyAgreement.legacyKDF=true --module-path $PATH_TO_FX --add-modules javafx.controls,javafx.fxml"
         }
     ]
 }

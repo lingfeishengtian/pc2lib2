@@ -16,7 +16,7 @@ import java.security.SecureRandom;
 public class ContestInstance {
     private InternalController controller;
     private InternalContest contest;
-    private String pathToBin;
+    private String rootPath;
     private ProfileUtils profileUtils;
     private Log mainLog;
 
@@ -52,7 +52,7 @@ public class ContestInstance {
         controller.setUsingGUI(false);
         controller.setLog(mainLog);
 
-        pathToBin = binPath;
+        rootPath = binPath;
 
         controller.setContactingRemoteServer(false);
         contest.setClientId(new ClientId(1, ClientType.Type.SERVER, 0));
@@ -88,7 +88,7 @@ public class ContestInstance {
 
             contest.storeConfiguration(mainLog);
 
-            f.setProfilePath(pathToBin + File.separator + f.getProfilePath());
+            f.setProfilePath(rootPath + File.separator + f.getProfilePath());
         } catch (IOException e) {
             System.out.println("File pathing issues!");
             System.exit(4);
@@ -317,8 +317,8 @@ public class ContestInstance {
         }
     }
 
-    public String getPathToBin() {
-        return pathToBin;
+    public String getRootPath() {
+        return rootPath;
     }
 
     private class InOutPair {

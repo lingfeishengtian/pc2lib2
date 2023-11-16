@@ -107,6 +107,8 @@ public class CommandExecutor {
                 String filePath = fileLoc.getAbsolutePath();
                 if (filePath.endsWith(File.separator))
                     filePath = filePath.substring(0, filePath.length() - 1);
+                if (System.getProperty("os.name").toLowerCase().contains("win") && !filePath.endsWith("bin"))
+                    filePath = filePath + File.separator + "bin";
                 contest = new ContestInstance(filePath, true, args[2]);
                 try {
                     contest.startDataViewing();

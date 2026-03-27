@@ -32,7 +32,7 @@ A `pc2pqascript` is a plain text file where each line is a command to automate t
 - **Effect:** Adds a single problem with the given input and output files.
 
 ### 4. `setDefaultContest`
-- **Purpose:** Sets the current contest as the default contest for the PC² environment.
+- **Purpose:** Sets default properties for the contest according to UIL rules.
 - **Example:**
   ```
   setDefaultContest

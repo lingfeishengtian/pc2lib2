@@ -2,6 +2,8 @@
 
 This document explains the structure and commands of the `pc2pqascript` automation script for PC² contest setup. Each command is described in detail, including its purpose and usage.
 
+Always use absolute paths. This is a limitation with how PC² handles file paths, and using relative paths may lead to errors if the script is executed from a different directory. Absolute paths ensure that the script can locate the necessary files and directories regardless of the execution context.
+
 ## Overview
 A `pc2pqascript` is a plain text file where each line is a command to automate the setup and configuration of a PC² contest environment. The script is processed sequentially, and each command modifies the contest state or adds data as specified.
 

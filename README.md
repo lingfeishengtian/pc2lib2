@@ -23,3 +23,9 @@ System.exit(0);
 View the [wiki](https://github.com/lingfeishengtian/pc2lib2/wiki) for more documentation.
 
 For detailed documentation on the pc2pqascript automation script and its commands, see [pc2pqascript.README.md](pc2pqascript.README.md).
+
+You can run a pc2pqascript with a command like this:
+
+```bash
+echo "run script.pc2pqascript" | java -cp pc2lib2-1.2.0.jar -Djdk.crypto.KeyAgreement.legacyKDF=true com.lingfeishengtian.cli.CLIStarter
+```

@@ -15,7 +15,7 @@ public class ProfileUtils {
 
     public ProfileUtils(String binPath, boolean shouldSearchForProfileProp, String profilePasscode, InternalController controller, InternalContest contest){
         manager = new ProfileManager();
-        File profilesPropertiesFile = new File(binPath + File.separator + "profiles.properties"); //binPath + File.separator +
+        File profilesPropertiesFile = new File(binPath + File.separator + "profiles.properties");
         if(profilesPropertiesFile.exists() && shouldSearchForProfileProp){
             try {
                 currentProfile = manager.getDefaultProfile(profilesPropertiesFile.getAbsolutePath());
@@ -34,7 +34,7 @@ public class ProfileUtils {
             currentProfile = ProfileManager.createNewProfile();
             currentProfile.setActive(true);
             String path = currentProfile.getProfilePath();
-            currentProfile.setProfilePath(binPath + File.separator + currentProfile.getProfilePath()); //binPath + File.separator +
+            currentProfile.setProfilePath(binPath + File.separator + currentProfile.getProfilePath());
             try {
                 manager.createProfilesPathandFiles(currentProfile, 1, profilePasscode);
             }catch (Exception e){
@@ -42,7 +42,7 @@ public class ProfileUtils {
             }
             try {
                 currentProfile.setProfilePath(path);
-                manager.store(binPath + File.separator + ProfileManager.PROFILE_INDEX_FILENAME, new Profile[]{currentProfile}, currentProfile); //binPath + File.separator +
+                manager.store(binPath + File.separator + ProfileManager.PROFILE_INDEX_FILENAME, new Profile[]{currentProfile}, currentProfile);
             } catch (IOException e){
                 System.out.println("There was an error while saving a new profile!");
             }

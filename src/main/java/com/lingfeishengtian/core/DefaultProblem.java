@@ -1,5 +1,10 @@
 package com.lingfeishengtian.core;
 
+import java.io.File;
+import java.io.IOException;
+
+import com.lingfeishengtian.utils.FileUtils;
+
 import edu.csus.ecs.pc2.core.model.Problem;
 import edu.csus.ecs.pc2.core.model.ProblemDataFiles;
 import edu.csus.ecs.pc2.core.model.SerializedFile;
@@ -84,6 +89,7 @@ public class DefaultProblem {
         if (outSerializedFiles == null) {
             throw new ProblemException("Your out folder cannot be null.");
         }
+        problem.setUsingExternalDataFiles(true);
         if (hasInputCases()) {
             problem.setDataFileName(testCaseName + inExtensions);
         }
@@ -120,5 +126,26 @@ public class DefaultProblem {
 
     public Problem getProblem() {
         return problem;
+    }
+
+    public void copyDataFilesToDir(String dir) {
+        for (SerializedFile file : inSerializedFiles) {
+            try {
+                FileUtils.copyFile(file.getFile(), new File(dir + File.separator + file.getName()));
+            } catch (IOException e) {
+                System.out.println("There was an error while trying to copy the input files.");
+            }
+        }
+        for (SerializedFile file : outSerializedFiles) {
+            try {
+                FileUtils.copyFile(file.getFile(), new File(dir + File.separator + file.getName()));
+            } catch (IOException e) {
+                System.out.println("There was an error while trying to copy the answer files.");
+            }
+        }
+    }
+
+    public String getTestCaseName() {
+        return testCaseName;
     }
 }

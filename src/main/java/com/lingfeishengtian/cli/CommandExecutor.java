@@ -55,7 +55,7 @@ public class CommandExecutor {
             System.out.println("You must load or create a contest before you make any actions.");
             System.out.println("Please save your contest before you exit!");
             System.out.println("run <file path> : This allows you to run a \"PC2PQA Script\"");
-            System.out.println("load <contest bin root path> <contest password> : Loads an existing contest or empty contest folder.");
+            System.out.println("load <contest directory> <contest password> : Loads an existing contest or empty contest folder.");
             System.out.println("new <contest folder destination> <contest password> : Creates a new contest folder.");
             System.out.println("add <property> {arguments} : Adds different stuff to the competition.");
             System.out.println("properties: account, problem");
@@ -107,8 +107,6 @@ public class CommandExecutor {
                 String filePath = fileLoc.getAbsolutePath();
                 if (filePath.endsWith(File.separator))
                     filePath = filePath.substring(0, filePath.length() - 1);
-                if (System.getProperty("os.name").toLowerCase().contains("win") && !filePath.endsWith("bin"))
-                    filePath = filePath + File.separator + "bin";
                 contest = new ContestInstance(filePath, true, args[2]);
                 try {
                     contest.startDataViewing();
@@ -123,7 +121,7 @@ public class CommandExecutor {
             }
         } else if (command.equals("new")) {
             File dir = new File(args[1]);
-            File existing = (new File(dir.getAbsolutePath() + File.separator + "pc2-9.8.0-6456"));
+            File existing = (new File(dir.getAbsolutePath() + File.separator + "pc2-9.10.0-7065.zip"));
             if (existing.exists()) {
                 deleteDir(existing);
             }
@@ -133,7 +131,7 @@ public class CommandExecutor {
                 } catch (IOException e) {
                     System.out.println("There was an error while trying to unzip.");
                 }
-            executeCommand(new String[]{"load", dir.getAbsolutePath() + File.separator + "pc2-9.8.0", args[2]});
+            executeCommand(new String[]{"load", dir.getAbsolutePath() + File.separator + "pc2-9.10.0", args[2]});
         } else if (command.equals("setLang")) {
             System.out.println("Not supported.");
         } else {

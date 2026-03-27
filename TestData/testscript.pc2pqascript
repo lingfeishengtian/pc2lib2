@@ -1,3 +1,28 @@
+# pc2pqascript Documentation
+#
+# This script automates PC² contest setup. Each command is on its own line.
+#
+# Commands:
+#
+# new <contest_dir> <admin_password>
+#   - Creates a new contest at <contest_dir> with the given admin password.
+#
+# add problem <problem_dir> <problem_list_file>
+#   - Adds problems to the contest from <problem_dir> using the list in <problem_list_file>.
+#   - Alternate: add problem <problem_dir> <input_file> <output_file>
+#     Adds a single problem with specified input and output files.
+#
+# setDefaultContest
+#   - Sets the current contest as the default contest.
+#
+# setNewPasscodes <passcodes_file>
+#   - Sets new team passcodes from the specified file.
+#
+# save
+#   - Saves the current contest configuration.
+#
+# (Add more commands here as needed for your workflow)
+
 # Setup Dulles competition script!
 new /Users/hunterhan/tomcat/webapps/ROOT theamazingsecuremima
 add problem /Users/hunterhan/Desktop/TravisCompetitionDataFiles /Users/hunterhan/Desktop/TravisCompetitionDataFiles/problemlistTravis.txt

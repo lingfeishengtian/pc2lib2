@@ -105,22 +105,17 @@ public class GUIStarter extends Application {
         File fileChosen = getUserChosenDirectory(actionEvent, null);
 
         if (fileChosen != null) {
-            File bin = new File(fileChosen.getAbsolutePath() + File.separator + "bin");
-            if (bin.exists()) {
-                Optional<String> str = getUserEnteredPassword();
-                try {
-                    executor.execute(new String[]{"load", bin.getAbsolutePath(), str.isPresent() ? str.orElse("No reason error") : ""}, false);
-                    contestStatusTxt.setText("Loaded " + bin.getAbsolutePath());
-                    contestStatusTxt.setFill(Color.GREEN);
-                    enableContestOperations();
-                    contestLog.setScrollTop(Double.MAX_VALUE);
-                } catch (Exception e) {
-                    System.out.println("Contest couldn't be loaded, try again!");
-                    e.printStackTrace();
-                    System.out.println("It looks like the contest password is incorrect or your bin path is incorrect. Unlikely, but your contest configuration could also be corrupted.");
-                }
-            } else {
-                System.out.println("Invalid bin directory location " + bin.getAbsolutePath());
+            Optional<String> str = getUserEnteredPassword();
+            try {
+                executor.execute(new String[]{"load", fileChosen.getAbsolutePath(), str.isPresent() ? str.orElse("No reason error") : ""}, false);
+                contestStatusTxt.setText("Loaded " + fileChosen.getAbsolutePath());
+                contestStatusTxt.setFill(Color.GREEN);
+                enableContestOperations();
+                contestLog.setScrollTop(Double.MAX_VALUE);
+            } catch (Exception e) {
+                System.out.println("Contest couldn't be loaded, try again!");
+                e.printStackTrace();
+                System.out.println("It looks like the contest password is incorrect or your contest path is incorrect. Unlikely, but your contest configuration could also be corrupted.");
             }
         } else {
             System.out.println("Operation choose pc2 root directory cancelled.");
@@ -149,7 +144,7 @@ public class GUIStarter extends Application {
 
             boolean sameNameExists = false;
             for (File x : chosen.listFiles()) {
-                if (x.getName().equals("pc2-9.8.0-6456")) {
+                if (x.getName().equals("pc2-9.10.0-7065.zip")) {
                     sameNameExists = true;
                     break;
                 }

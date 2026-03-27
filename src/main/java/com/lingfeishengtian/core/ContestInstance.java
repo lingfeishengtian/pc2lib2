@@ -1,5 +1,6 @@
 package com.lingfeishengtian.core;
 
+import com.lingfeishengtian.utils.FileUtils;
 import com.lingfeishengtian.utils.ProfileUtils;
 import edu.csus.ecs.pc2.core.InternalController;
 import edu.csus.ecs.pc2.core.list.AccountComparator;
@@ -57,8 +58,10 @@ public class ContestInstance {
         controller.setContactingRemoteServer(false);
         contest.setClientId(new ClientId(1, ClientType.Type.SERVER, 0));
 
+        contest.getContestInformation().setJudgeCDPBasePath(rootPath + File.separator + "problemData");
+
         profileUtils = new ProfileUtils(binPath, useExistingProfileFromProfilesProperties, contestPasscode, controller,
-                contest);
+            contest);
 
         Profile f = profileUtils.getCurrentProfile();
         pPath = f.getProfilePath();
@@ -66,6 +69,8 @@ public class ContestInstance {
         contest.setProfile(f);
         controller.setTheProfile(f);
     }
+
+
 
     /**
      * Initializes the server and exposes internal API to allow modification.
@@ -120,7 +125,14 @@ public class ContestInstance {
     }
 
     public void addProblem(DefaultProblem problem) {
-        contest.addProblem(problem.getProblem(), problem.generateDataFiles());
+        ProblemDataFiles dataFiles = problem.generateDataFiles();
+        contest.addProblem(problem.getProblem(), dataFiles);
+        
+        String problemDataDir = rootPath + File.separator + "problemData" + File.separator + problem.getTestCaseName();
+        FileUtils.mkdirs(new File(problemDataDir));
+
+        problem.copyDataFilesToDir(problemDataDir);
+
         setContestAutoJudges();
     }
 
